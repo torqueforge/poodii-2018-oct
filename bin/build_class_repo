@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+if ARGV.length != 1
+  puts "Usage: bin/build_class_repo <GITHUB_REPOSITORY_URL>"
+  puts "  e.g. bin/build_class_repo git@github.com:torqueforge/biz-2019-jan.git"
+  exit 1
+end
+
+ARGV << "exercises2"
+load '../teach/bin/build_course_repo'
+
+# TODO update this when you know something
+# Checkout day 1 exercises
+# `git checkout origin/bottles -- bottles/`
+# `git checkout origin/house -- house/`
+
+# Voila
+class_name = ARGV[2] # pushed on by teach/bin/build_course_repo
+
+`git commit -m 'Create repo for #{class_name}'`
+`git push origin master`
