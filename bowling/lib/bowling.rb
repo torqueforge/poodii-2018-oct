@@ -24,6 +24,7 @@ class Bowling
       if (remaining_rolls.take(2).sum) == 10
         running_score  += remaining_rolls.take(3).sum
         remaining_rolls = remaining_rolls.drop(2)
+        next
       end
 
       # open frame
