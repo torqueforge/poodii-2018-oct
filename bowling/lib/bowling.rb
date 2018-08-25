@@ -14,7 +14,7 @@ class Bowling
       current_frame += 1
 
       # strike
-      if (remaining_rolls[0]) == 10
+      if (remaining_rolls.take(1).sum) == 10
         if remaining_rolls.size > 2
           running_score += remaining_rolls.take(3).sum
           remaining_rolls = remaining_rolls.drop(1)
