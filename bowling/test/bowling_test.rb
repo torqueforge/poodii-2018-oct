@@ -29,4 +29,9 @@ class BowlingTest < Minitest::Test
     rolls = [10] * 12
     assert_equal 300, Bowling.new(rolls).score
   end
+
+  def test_final_spare
+    rolls = [1] * 18 + [4,6,4]
+    assert_equal 32, Bowling.new(rolls).score
+  end
 end
