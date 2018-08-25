@@ -13,6 +13,12 @@ class Bowling
     while current_frame < max_frames
       current_frame += 1
 
+      # strike
+      if (remaining_rolls[0]) == 10
+        running_score += remaining_rolls.take(3).sum
+        remaining_rolls = remaining_rolls.drop(1)
+      end
+
       # spare
       if (remaining_rolls.take(2).sum) == 10
         running_score  += remaining_rolls.take(3).sum
