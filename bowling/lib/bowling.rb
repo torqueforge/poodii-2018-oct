@@ -17,6 +17,7 @@ class Bowling
       if (remaining_rolls[0]) == 10
         running_score += remaining_rolls.take(3).sum
         remaining_rolls = remaining_rolls.drop(1)
+        next
       end
 
       # spare
