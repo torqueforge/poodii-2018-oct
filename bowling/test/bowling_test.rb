@@ -19,4 +19,9 @@ class BowlingTest < Minitest::Test
     rolls = [5, 5, 3] + [0] * 17
     assert_equal 16, Bowling.new(rolls).score
   end
+
+  def test_one_strike
+    rolls = [10, 3, 4] + [0] * 18
+    assert_equal 24, Bowling.new(rolls).score
+  end
 end
