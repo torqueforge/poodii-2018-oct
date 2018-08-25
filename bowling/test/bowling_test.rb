@@ -24,4 +24,9 @@ class BowlingTest < Minitest::Test
     rolls = [10, 3, 4] + [0] * 18
     assert_equal 24, Bowling.new(rolls).score
   end
+
+  def test_perfect_game
+    rolls = [10] * 12
+    assert_equal 300, Bowling.new(rolls).score
+  end
 end
