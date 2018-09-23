@@ -1,3 +1,69 @@
+# New requirement: LOWBALL
+# The goal of this game it to roll the lowest score
+# while knocking down at least 1 pin with every roll.
+#
+# Gutter balls are penalized as per the rules below.
+#
+# The rules are:
+#   If 1st roll knocks down 0 pins,
+#     score for that roll is 10 and
+#       the frame score includes the score of the next 2 rolls.
+#   This is a LOWBALL 'strike'.
+#
+#   If 2nd roll knocks down 0 pins,
+#     score for that roll is 10 - number-of-pins-knocked-down-by-1st-roll
+#       the frame score includes the score of the next roll.
+#   This is a LOWBALL 'spare'.
+#
+#   Open frame is two non-zero rolls.
+#
+# The best achievable score is therefore 20.
+
+#####################################################################
+# Ponderings:
+#   The existing code is very much not open to DUCKPIN.
+#     1) The structure of the config won't support DUCKPIN rules
+#     2) DUCKPIN allow a roll's score to differ from its pinfall
+#
+# The fundamental design rule is to isolate the things you need to vary,
+# so the first task here is to understand what, exactly, needs to change.
+#
+# The difficulty of this task is exacerbated by the disorderliness of
+# the existing code.  It works for the old requirements, but it's
+# annoying in a number of ways.
+#
+# 1) The Bowling class pretends that its job is to calculate a score, but
+#    most of the logic is concerned with turning a list of rolls into
+#    a list of (virtual) 'frames', for which it then sums scores.
+#
+#    I wish Bowling was better named, and more honest.
+#
+# 2) The Rules class uses a config to select a 'rule'.  This 'rule'
+#    is used by the badly named Bowling class as if it defines a 'frame',
+#    which Bowling knows how to score.
+#
+#    I wish Frame was a real thing which calculated it's own score.
+#
+# 3) The structure of the rules has leaked all over.  For example,
+#    Rules#scoring_rule and Bowling#score both have multiple references
+#    to keys in the hash.
+#
+#    I'd like the structure of the hash to be known in only one place.
+#
+#
+# Next Steps:
+# As always, we need to isolate the thing we want to vary.  However,
+# it's not super clear what that thing is, i.e., what the exact
+# code difference should be between the code we have and
+# code that would also support DUCKPIN.  Because of this, it's time
+# to remove possibly related code smells, hoping to increase isolation.
+#
+# Goals:
+#   Isolate config knowledge in the Rules class
+#   Isolate frame scoring knowledge in a new Frame class
+#   Change Bowling into something that converts rolls into Frame objects
+#####################################################################
+
 class Bowling
   attr_reader :rolls, :config
   def initialize(rolls, config=Rules::CONFIGS[:TENPIN])
