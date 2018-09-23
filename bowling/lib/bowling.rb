@@ -41,3 +41,18 @@ class Bowling
       {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
   end
 end
+
+
+class Rules
+  def scoring_rule(rolls)
+    scoring_rules.find {|rule|
+      (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
+    }
+  end
+
+  def scoring_rules
+    [ {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
+      {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
+      {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
+  end
+end
