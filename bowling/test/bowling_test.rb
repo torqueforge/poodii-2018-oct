@@ -51,4 +51,13 @@ class BowlingTest < Minitest::Test
     rolls = [5,5,6,4]
     assert_equal 16, Bowling.new(rolls).score
   end
+
+  # This test starts the road to ruin.
+  # Consider:
+  #  Why do we have to explicitly test NOTAP scoring here?
+  #  What will happen to the tests when we add other bowling variants?
+  def test_scoring_partial_notap_game_with_unfulfilled_spare
+    rolls = [9,9,9,3,6,2]
+    assert_equal 77, Bowling.new(rolls, config=Rules::CONFIGS[:NOTAP]).score
+  end
 end
