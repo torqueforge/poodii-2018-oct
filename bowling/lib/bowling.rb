@@ -63,7 +63,7 @@ class Rules
   end
 
   def scoring_rule(rolls)
-    scoring_rules.find {|rule|
+    config.scoring_rules.find {|rule|
       (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
     }
   end
