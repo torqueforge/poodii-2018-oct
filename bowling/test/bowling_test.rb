@@ -14,10 +14,128 @@ require_relative '../lib/bowling'
 # the tests of game variations in Frames.
 
 class StandardRollParserTest < Minitest::Test
+  def setup
+    @parser = StandardRollParser.new
+    @configs = [
+      {num_triggering_rolls: 1, triggering_value: 11, num_rolls_to_score: 4},  # strike
+      {num_triggering_rolls: 2, triggering_value: 11, num_rolls_to_score: 4},  # spare
+      {num_triggering_rolls: 2, triggering_value:  8, num_rolls_to_score: 3},  # hug
+      {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ] # open
+  end
+
+  def test_strike_with_all_bonus_rolls
+    rolls = [11,12,13,14]
+    expected = [1, 4, [11,12,13,14]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_strike_with_some_bonus_rolls
+    rolls = [11,12]
+    expected = [1, 4, [11,12]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_strike_without_bonus_rolls
+    rolls = [11]
+    expected = [1, 4, [11]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_spare_with_all_bonus_rolls
+    rolls = [7,4,1,2]
+    expected = [2, 4, [7,4,1,2]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_spare_with_some_bonus_rolls
+    rolls = [7,4,1]
+    expected = [2, 4, [7,4,1]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_strike_without_bonus_rolls
+    rolls = [7,4]
+    expected = [2, 4, [7,4]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_hug_with_all_bonus_rolls
+    rolls = [4,4,1]
+    expected = [2, 3, [4,4,1]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_hug_without_bonus_rolls
+    rolls = [4,4]
+    expected = [2, 3, [4,4]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
+
+  def test_open_frame
+    rolls = [1,2]
+    expected = [2, 2, [1,2]]
+
+    assert_equal expected, @parser.parse(rolls: rolls, frame_configs: @configs)
+  end
 end
 
+
 class LowballRollParserTest < Minitest::Test
+  def setup
+    @parser = LowballRollParser.new
+  end
+
+  def test_strike_with_all_bonus_rolls
+    rolls = [0,1,2]
+    expected = [1, 3, [10, 1, 2]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
+
+  def test_strike_with_some_bonus_rolls
+    rolls = [0,1]
+    expected = [1, 3, [10, 1]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
+
+  def test_strike_without_bonus_rolls
+    rolls = [0]
+    expected = [1, 3, [10]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
+
+  def test_spare_with_all_bonus_rolls
+    rolls = [1,0,2]
+    expected = [2, 3, [1, 9, 2]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
+
+  def test_spare_without_bonus_rolls
+    rolls = [1,0]
+    expected = [2, 3, [1,9]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
+
+  def test_open_frame
+    rolls = [1,2]
+    expected = [2, 2, [1,2]]
+
+    assert_equal expected, @parser.parse(rolls: rolls)
+  end
 end
+
 
 class VariantTest < Minitest::Test
 end
@@ -104,8 +222,9 @@ class FramesTest < Minitest::Test
     assert_equal 120, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
   end
 
+  # Just goes to show you, this integration test had a bug in it! The result is 12, not 13.
   def test_scoring_lowball_game_b
     rolls = [1,0,2]
-    assert_equal 13, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
+    assert_equal 12, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
   end
 end
