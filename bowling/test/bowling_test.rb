@@ -171,17 +171,6 @@ end
 
 
 class FramesTest < Minitest::Test
-end
-
-class FrameTest < Minitest::Test
-  def test_sums_rolls_to_calculate_score
-    assert_equal 160, Frame.new(rolls: [10,50,100]).score
-  end
-end
-
-
-
-class FramesTest < Minitest::Test
   def test_gutter_game
     rolls = [0] * 20
     assert_equal 0, Frames.for(rolls: rolls).score
@@ -230,5 +219,12 @@ class FramesTest < Minitest::Test
   def test_scoring_partial_game_with_unfulfilled_spare
     rolls = [5,5,6,4]
     assert_equal 16, Frames.for(rolls: rolls).score
+  end
+end
+
+
+class FrameTest < Minitest::Test
+  def test_sums_rolls_to_calculate_score
+    assert_equal 160, Frame.new(rolls: [10,50,100]).score
   end
 end
