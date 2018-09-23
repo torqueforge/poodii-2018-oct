@@ -38,8 +38,11 @@ class Rules
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
       },
-    :TOTAP => {
-      :scoring_rules => [ ]
+    :NOTAP => {
+      :scoring_rules => [
+        {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
+        {num_triggering_rolls: 2, triggering_value: 9, num_rolls_to_score: 3},
+        {num_triggering_rolls: 2, triggering_value: 0, num_rolls_to_score: 2} ]
       }
     }
 
