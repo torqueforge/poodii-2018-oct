@@ -24,7 +24,6 @@ class Frame
 
   def score
     (normal_rolls + bonus_rolls).sum
-    rolls.sum
   end
 end
 
