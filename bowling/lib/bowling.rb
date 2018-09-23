@@ -25,21 +25,6 @@ class Bowling
 
     running_score
   end
-
-  def scoring_rule(rolls)
-    scoring_rules.find {|rule|
-      (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
-    }
-  end
-
-  # NOTAP needs different scoring_rules.
-  # Now that the TENPIN rules are isolated, we can extract and re-inject them.
-  # This will create a new seam where we can inject NOTAP rules instead.
-  def scoring_rules
-    [ {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
-      {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
-      {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
-  end
 end
 
 require 'ostruct'
