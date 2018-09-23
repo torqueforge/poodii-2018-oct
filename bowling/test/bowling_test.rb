@@ -137,8 +137,38 @@ class LowballRollParserTest < Minitest::Test
 end
 
 
-class VariantTest < Minitest::Test
+class TestParserWhichAlwaysReturnsTwoRollsOfOnePin
+  def parse(rolls:, frame_configs:)
+    [2,2,[1,1]]
+  end
 end
+
+class VariantTest < Minitest::Test
+  def setup
+    @config = { :parser => "TestParserWhichAlwaysReturnsTwoRollsOfOnePin"}
+
+    # Notice that the parser puts two rolls in a frame, so
+    # an array with 5 things should get us 3 frames, the first two
+    # of which have a score.
+    @input_rolls = [nil] * 5
+  end
+
+  def test_first_frame
+    f = Variant.new(config: @config).framify(@input_rolls).first
+    assert_equal 2, f.score
+  end
+
+  def test_second_frame
+    f = Variant.new(config: @config).framify(@input_rolls)[1]
+    assert_equal 2, f.score
+  end
+
+  def test_last_frame
+    f = Variant.new(config: @config).framify(@input_rolls).last
+    assert_equal 0, f.score
+  end
+end
+
 
 class FramesTest < Minitest::Test
 end
