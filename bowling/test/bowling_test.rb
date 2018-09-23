@@ -250,19 +250,19 @@ class DetailedScoresheetTest < Minitest::Test
     @io = StringIO.new
   end
 
-  def test_scoresheet_for_incomplete_game
-    rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0])
-    frames = Frames.for(rolls: rolls)
+  # def test_scoresheet_for_incomplete_game
+  #   rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0])
+  #   frames = Frames.for(rolls: rolls)
 
-    expected =
-      "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|\n" +
-      "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n" +
-      "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |   .    |   .    |   .    |   .    |\n" +
-      "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     |        |        |        |        |\n" +
-      "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     |        |        |        |        |\n"
+  #   expected =
+  #     "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|\n" +
+  #     "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n" +
+  #     "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |   .    |   .    |   .    |   .    |\n" +
+  #     "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     |        |        |        |        |\n" +
+  #     "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     |        |        |        |        |\n"
 
-    DetailedScoresheet.new(frames: frames, io: @io).render
-    assert_equal expected, @io.string
-  end
+  #   DetailedScoresheet.new(frames: frames, io: @io).render
+  #   assert_equal expected, @io.string
+  # end
 end
 
