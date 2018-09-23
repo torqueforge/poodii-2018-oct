@@ -217,3 +217,52 @@ class FrameTest < Minitest::Test
     assert_equal 160, Frame.new(rolls: [10,50,100]).score
   end
 end
+
+
+
+# New Requirement: Print a scoresheet
+#
+# The scoresheet below is not as DRY as the canonical bowling scoresheet
+# that you see displayed at bowling alleys.
+#
+# This 'detailed' scoresheet introduces several difficulties:
+#
+# 1) Frame answers 0 for rolls that have not yet occurred.
+#     The scoresheet wants to print 0 when a gutterball was rolled,
+#     but nothing otherwise.
+#
+# 2) Frame objects don't currently distinguish between normal and bonus rolls
+#     so they can't provide info for the PINS and BONUS lines below.
+#
+#  This scoresheet explicitly prints bonus rolls on the BONUS line
+#    of the frame to which they accrue.  This means that not only do
+#    bonus rolls appear separately from normal rolls, but bonus rolls
+#    appear twice, once in the frame in which they were originally rolled,
+#    and a second time in the frame where they count again towards
+#    the frame's score.
+#
+# Both of these problems can be fixed by making Frame smarter.
+# Making Frame smarter means changing Variant to pass more information
+# to a Frame at creation time.
+
+class DetailedScoresheetTest < Minitest::Test
+  def setup
+    @io = StringIO.new
+  end
+
+  def test_scoresheet_for_incomplete_game
+    rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0])
+    frames = Frames.for(rolls: rolls)
+
+    expected =
+      "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|\n" +
+      "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n" +
+      "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |   .    |   .    |   .    |   .    |\n" +
+      "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     |        |        |        |        |\n" +
+      "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     |        |        |        |        |\n"
+
+    DetailedScoresheet.new(frames: frames, io: @io).render
+    assert_equal expected, @io.string
+  end
+end
+
