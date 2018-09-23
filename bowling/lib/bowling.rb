@@ -26,6 +26,18 @@ class Frame
 end
 
 
+class DetailedScoresheet
+  attr_reader :frames, :out
+  def initialize(frames:, io: $stdout)
+    @frames = frames
+    @out    = io
+  end
+
+  def pinfall_line
+    "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n"
+  end
+end
+
 
 require 'ostruct'
 
