@@ -1,131 +1,183 @@
-# New requirement: LOWBALL
-# The goal of this game it to roll the lowest score
-# while knocking down at least 1 pin with every roll.
-#
-# Gutter balls are penalized as per the rules below.
-#
-# The rules are:
-#   If 1st roll knocks down 0 pins,
-#     score for that roll is 10 and
-#       the frame score includes the score of the next 2 rolls.
-#   This is a LOWBALL 'strike'.
-#
-#   If 2nd roll knocks down 0 pins,
-#     score for that roll is 10 - number-of-pins-knocked-down-by-1st-roll
-#       the frame score includes the score of the next roll.
-#   This is a LOWBALL 'spare'.
-#
-#   Open frame is two non-zero rolls.
-#
-# The best achievable score is therefore 20.
+class Frames
+  def self.for(rolls:, config: Variant::CONFIGS[:TENPIN])
+    new(Variant.new(config: config).framify(rolls))
+  end
 
-#####################################################################
-# Ponderings:
-#   The existing code is very much not open to DUCKPIN.
-#     1) The structure of the config won't support DUCKPIN rules
-#     2) DUCKPIN allow a roll's score to differ from its pinfall
-#
-# The fundamental design rule is to isolate the things you need to vary,
-# so the first task here is to understand what, exactly, needs to change.
-#
-# The difficulty of this task is exacerbated by the disorderliness of
-# the existing code.  It works for the old requirements, but it's
-# annoying in a number of ways.
-#
-# 1) The Bowling class pretends that its job is to calculate a score, but
-#    most of the logic is concerned with turning a list of rolls into
-#    a list of (virtual) 'frames', for which it then sums scores.
-#
-#    I wish Bowling was better named, and more honest.
-#
-# 2) The Rules class uses a config to select a 'rule'.  This 'rule'
-#    is used by the badly named Bowling class as if it defines a 'frame',
-#    which Bowling knows how to score.
-#
-#    I wish Frame was a real thing which calculated it's own score.
-#
-# 3) The structure of the rules has leaked all over.  For example,
-#    Rules#scoring_rule and Bowling#score both have multiple references
-#    to keys in the hash.
-#
-#    I'd like the structure of the hash to be known in only one place.
-#
-#
-# Next Steps:
-# As always, we need to isolate the thing we want to vary.  However,
-# it's not super clear what that thing is, i.e., what the exact
-# code difference should be between the code we have and
-# code that would also support DUCKPIN.  Because of this, it's time
-# to remove possibly related code smells, hoping to increase isolation.
-#
-# Goals:
-#   Isolate config knowledge in the Rules class
-#   Isolate frame scoring knowledge in a new Frame class
-#   Change Bowling into something that converts rolls into Frame objects
-#####################################################################
-
-class Bowling
-  attr_reader :rolls, :config
-  def initialize(rolls, config=Rules::CONFIGS[:TENPIN])
-    @rolls  = rolls
-    @config = config
+  attr_reader :list
+  def initialize(list)
+    @list  = list
   end
 
   def score
-    running_score = 0
-    current_frame = 0
-    max_frames    = 10
-    remaining_rolls = rolls
-
-    while current_frame < max_frames
-      current_frame += 1
-      rule = Rules.new(config: config).scoring_rule(remaining_rolls)
-
-      if (remaining_rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
-        if remaining_rolls.size >=  rule[:num_rolls_to_score]
-          running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
-          remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
-        end
-        next
-      end
-    end
-
-    running_score
+    list.reduce(0) {|sum, frame| sum += frame.score}
   end
 end
 
+
+class Frame
+  attr_reader :rolls
+  def initialize(rolls:)
+    @rolls = rolls
+  end
+
+  def score
+    rolls.sum
+  end
+end
+
+
+
 require 'ostruct'
 
-class Rules
+class Variant
   CONFIGS = {
     :TENPIN => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
       },
     :NOTAP => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 0, num_rolls_to_score: 2} ]
       },
     :DUCKPIN => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 3, triggering_value:  0, num_rolls_to_score: 3} ]
+      },
+    :LOWBALL => {
+      :parser => "LowballRollParser",
+      :scoring_rules => [ # The current structure won't work for LOWBALL
+         ]
       }
     }
 
-  attr_reader :config
+  attr_reader :config, :parser
   def initialize(config:)
     @config = OpenStruct.new(config)
+    @parser = Object.const_get(self.config.parser).new
   end
 
-  def scoring_rule(rolls)
-    config.scoring_rules.find {|rule|
-      (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
-    }
+  def framify(rolls)
+    frame_list    = []
+    current_frame = 0
+    max_frames    = 10
+    remaining_rolls = rolls
+
+    while current_frame < max_frames
+      current_frame += 1
+      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
+
+      roll_scores =
+        if remaining_rolls.size >=  num_rolls_to_score
+          roll_scores
+        else
+          [0]
+        end
+
+      remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
+      frame_list << Frame.new(rolls: roll_scores)
+    end
+
+    frame_list
+  end
+
+  def parse(rolls)
+    parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
+  end
+end
+
+
+########################## Roll Parsers #############################
+
+#############################
+# StandardRollParser uses rules specified in a configuration hash
+# to parse frame information from a list of rolls.
+#
+# It returns the original pinfall as the score for each roll.
+#############################
+class StandardRollParser
+
+  def parse(rolls:, frame_configs:)
+
+    # Select the applicable frame config
+    cfg =
+      frame_configs.find {|frame_cfg|
+        (rolls.take(frame_cfg[:num_triggering_rolls]).sum) >= frame_cfg[:triggering_value]
+      }
+
+      [ cfg[:num_triggering_rolls], cfg[:num_rolls_to_score], rolls.take(cfg[:num_rolls_to_score]) ]
+  end
+end
+
+#############################
+# LowBallParse contains redundant, duplicative, awkward logic
+#  to parse frame information from a list of rolls.
+#
+# The rules are:
+#   If 1st roll is 0,
+#     roll_score is 10 and you get 2 bonus rolls.
+#
+#   If 2nd roll is 0,
+#     roll_score for 2nd roll is 10-1st roll, and you get 1 bonus roll.
+#
+#   Open frame is two non-zero rolls.
+#
+# By definition, it returns an alternate score for some input pinfalls.
+#############################
+class LowballRollParser
+
+  def parse(rolls:, frame_configs:)
+
+    # strike
+    if rolls[0] == 0
+      num_triggering_rolls = 1
+      num_rolls_to_score   = 3
+      roll_scores = [10]
+
+      roll_scores +=
+        (if   rolls[1] == 0 && rolls[2] == 0
+          [10, 10]
+
+        elsif rolls[1] == 0 && rolls[2] != 0
+          [10, rolls[2]]
+
+        elsif rolls[1] != 0 && rolls[2] == 0
+          [rolls[1], 10-rolls[1]]
+
+        else
+          [rolls[1], rolls[2]]
+        end)
+
+    # spare
+    elsif
+      if rolls[1] == 0
+        num_triggering_rolls = 2
+        num_rolls_to_score   = 3
+        roll_scores = [rolls[0], 10-rolls[1]]
+
+        roll_scores +=
+          (if rolls[2] == 0
+            [10]
+          else
+            [rolls[2]]
+          end)
+      end
+
+    # open frame
+    else
+      num_triggering_rolls = 2
+      num_rolls_to_score   = 2
+      roll_scores = [rolls[0], rolls[1]]
+    end
+
+    [num_triggering_rolls, num_rolls_to_score, roll_scores.compact]
   end
 end
