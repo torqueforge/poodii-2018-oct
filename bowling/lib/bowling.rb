@@ -52,6 +52,18 @@ class Bowling
         next
       end
 
+      _num_triggering_rolls = 2
+      _triggering_value     = 0
+      _num_rolls_to_score   = 2
+
+      if (remaining_rolls.take(_num_triggering_rolls).sum) >= _triggering_value
+        if remaining_rolls.size >=  _num_rolls_to_score
+          running_score  += remaining_rolls.take(_num_rolls_to_score).sum
+          remaining_rolls = remaining_rolls.drop(_num_triggering_rolls)
+        end
+        next
+      end
+
       # open frame
       if (remaining_rolls.take(2).sum) >= 0
         if remaining_rolls.size >= 2
