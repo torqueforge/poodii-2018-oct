@@ -44,7 +44,7 @@ class Rules
     }
 
   attr_reader :config
-  def initialize(config: CONFIGS[:TENPIN])
+  def initialize(config:)
     @config = OpenStruct.new(config)
   end
 
