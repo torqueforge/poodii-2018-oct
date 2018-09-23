@@ -134,7 +134,7 @@ end
 #############################
 class LowballRollParser
 
-  def parse(rolls:, frame_configs:)
+  def parse(rolls:, frame_configs: nil)
 
     # strike
     if rolls[0] == 0
@@ -161,7 +161,8 @@ class LowballRollParser
       if rolls[1] == 0
         num_triggering_rolls = 2
         num_rolls_to_score   = 3
-        roll_scores = [rolls[0], 10-rolls[1]]
+
+        roll_scores = [rolls[0], (10-rolls[0])]
 
         roll_scores +=
           (if rolls[2] == 0
