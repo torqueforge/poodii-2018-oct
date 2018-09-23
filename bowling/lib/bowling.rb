@@ -42,6 +42,7 @@ class Bowling
   end
 end
 
+require 'ostruct'
 
 class Rules
   CONFIGS = {
@@ -56,6 +57,10 @@ class Rules
       }
     }
 
+  attr_reader :config
+  def initialize(config: CONFIGS[:TENPIN])
+    @config = OpenStruct.new(config)
+  end
 
   def scoring_rule(rolls)
     scoring_rules.find {|rule|
