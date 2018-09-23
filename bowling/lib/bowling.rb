@@ -23,6 +23,7 @@ class Frame
   end
 
   def score
+    (normal_rolls + bonus_rolls).sum
     rolls.sum
   end
 end
@@ -97,7 +98,7 @@ class Variant
         end
 
       normal = roll_scores.take(num_triggering_rolls)
-      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score]
+      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
 
       remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
       frame_list << Frame.new(rolls: roll_scores, normal_rolls: normal, bonus_rolls: bonus)
