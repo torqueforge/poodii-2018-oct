@@ -231,33 +231,4 @@ class FramesTest < Minitest::Test
     rolls = [5,5,6,4]
     assert_equal 16, Frames.for(rolls: rolls).score
   end
-
-  # This test starts the road to ruin.
-  # Consider:
-  #  Why do we have to explicitly test NOTAP scoring here?
-  #  What will happen to the tests when we add other bowling variants?
-  def test_scoring_partial_notap_game_with_unfulfilled_spare
-    rolls = [9,9,9,3,6,2]
-    assert_equal 77, Frames.for(rolls: rolls, config: Variant::CONFIGS[:NOTAP]).score
-  end
-
-  # See the fear above has already come true. Our design means we'll
-  # end up with a 'Frames' test for all possible outcomes for each
-  # game variant.
-  def test_scoring_partial_duckpin_game_with_unfulfilled_spare
-    rolls = [1,1,1,2,2,2,10,2,2,3]
-    assert_equal 30, Frames.for(rolls: rolls, config: Variant::CONFIGS[:DUCKPIN]).score
-  end
-
-  # Add some more test duplication to prove that LOWBALL works, prior to refactoring the tests
-  def test_scoring_lowball_game_a
-    rolls = [0,0,0,0,0,0]
-    assert_equal 120, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
-  end
-
-  # Just goes to show you, this integration test had a bug in it! The result is 12, not 13.
-  def test_scoring_lowball_game_b
-    rolls = [1,0,2]
-    assert_equal 12, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
-  end
 end
