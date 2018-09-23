@@ -32,6 +32,9 @@ class Bowling
     }
   end
 
+  # NOTAP needs different scoring_rules.
+  # Now that the TENPIN rules are isolated, we can extract and re-inject them.
+  # This will create a new seam where we can inject NOTAP rules instead.
   def scoring_rules
     [ {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
       {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
