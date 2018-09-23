@@ -174,6 +174,9 @@ class FramesTest < Minitest::Test
 end
 
 class FrameTest < Minitest::Test
+  def test_sums_rolls_to_calculate_score
+    assert_equal 160, Frame.new(rolls: [10,50,100]).score
+  end
 end
 
 
