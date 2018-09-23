@@ -28,6 +28,10 @@ class Bowling
       #   next
       # end
 
+      _num_triggering_rolls =  1
+      _triggering_value     = 10
+      _num_rolls_to_score   =  3
+
       # strike
       if (remaining_rolls.take(1).sum) >= 10
         if remaining_rolls.size >= 3
