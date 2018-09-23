@@ -69,6 +69,12 @@ class Bowling
     running_score
   end
 
+  def scoring_rule(rolls)
+    scoring_rules.find {|rule|
+      (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
+    }
+  end
+
   # Each row in this array of hashes holds the information needed to
   # build a frame from a set of incoming rolls.  Each hash can be thought of
   # as a 'rule' for building a frame.
