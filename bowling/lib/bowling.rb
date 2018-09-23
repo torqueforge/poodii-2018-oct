@@ -68,4 +68,21 @@ class Bowling
 
     running_score
   end
+
+  # Each row in this array of hashes holds the information needed to
+  # build a frame from a set of incoming rolls.  Each hash can be thought of
+  # as a 'rule' for building a frame.
+  #
+  # The applicable 'rule' for a list of incoming rolls is the first rule
+  # where the sum of the number of triggering rolls
+  # is greater than or equal to the triggering value.
+  #
+  # More than one rule might match so they must be arranged in
+  # more-to-least specific order.  For TENPIN bowling, for examples, the
+  # rule order is Strike -> Spare -> Open.
+  def scoring_rules
+    [ {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
+      {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
+      {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
+  end
 end
