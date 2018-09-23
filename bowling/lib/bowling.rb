@@ -29,8 +29,8 @@ class Bowling
       # end
 
       # strike
-      if (remaining_rolls.take(1).sum) == 10
-        if remaining_rolls.size > 2
+      if (remaining_rolls.take(1).sum) >= 10
+        if remaining_rolls.size >= 3
           running_score += remaining_rolls.take(3).sum
           remaining_rolls = remaining_rolls.drop(1)
         end
@@ -38,8 +38,8 @@ class Bowling
       end
 
       # spare
-      if (remaining_rolls.take(2).sum) == 10
-        if remaining_rolls.size > 2
+      if (remaining_rolls.take(2).sum) >= 10
+        if remaining_rolls.size >= 3
           running_score  += remaining_rolls.take(3).sum
           remaining_rolls = remaining_rolls.drop(2)
         end
