@@ -1,3 +1,11 @@
+# New requirement: DUCKPIN
+
+# In DUCKPIN bowling, players get an extra roll in open frames.
+# Strikes and spares work the same as in TENPIN.
+
+# Open frames earn no bonus rolls, even if the player
+# manages to knock down all the pins on the 3rd roll.
+
 class Bowling
   attr_reader :rolls, :config
   def initialize(rolls, config=Rules::CONFIGS[:TENPIN])
