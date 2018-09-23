@@ -15,9 +15,11 @@ end
 
 
 class Frame
-  attr_reader :rolls
-  def initialize(rolls:)
+  attr_reader :rolls, :normal_rolls, :bonus_rolls
+  def initialize(rolls:, normal_rolls: nil, bonus_rolls: nil)
     @rolls = rolls
+    @normal_rolls = normal_rolls
+    @bonus_rolls  = bonus_rolls
   end
 
   def score
@@ -94,8 +96,11 @@ class Variant
           [0]
         end
 
+      normal = roll_scores.take(num_triggering_rolls)
+      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score]
+
       remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << Frame.new(rolls: roll_scores)
+      frame_list << Frame.new(rolls: roll_scores, normal_rolls: normal, bonus_rolls: bonus)
     end
 
     frame_list
