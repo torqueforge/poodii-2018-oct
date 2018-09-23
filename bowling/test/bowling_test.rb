@@ -247,7 +247,14 @@ end
 
 class DetailedScoresheetTest < Minitest::Test
   def setup
+    incomplete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0])
+    @incomplete_frames = Frames.for(rolls: incomplete_rolls)
     @io = StringIO.new
+  end
+
+  def test_incomplete_game_pinfall_line
+    expected = "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n"
+    assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).pinfall_line
   end
 
   # def test_scoresheet_for_incomplete_game
