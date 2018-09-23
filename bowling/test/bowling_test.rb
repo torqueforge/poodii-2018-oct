@@ -1,6 +1,35 @@
 require_relative '../../test_helper'
 require_relative '../lib/bowling'
 
+
+# New requirement: Write actual unit tests.
+#
+# We've made it a good long way using the original Bowling (now Frames)
+# tests as integration tests, but testing at such a high level means
+# we have to write tests for all the possible combinations of inputs
+# and outputs, which has led to a combinatorial explosion of tests in a
+# single, high-level class.
+#
+# It's time to write unit tests for the new classes so we can delete
+# the tests of game variations in Frames.
+
+class StandardRollParserTest < Minitest::Test
+end
+
+class LowballRollParserTest < Minitest::Test
+end
+
+class VariantTest < Minitest::Test
+end
+
+class FramesTest < Minitest::Test
+end
+
+class FrameTest < Minitest::Test
+end
+
+
+
 class FramesTest < Minitest::Test
   def test_gutter_game
     rolls = [0] * 20
