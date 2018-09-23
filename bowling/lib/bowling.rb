@@ -1,7 +1,8 @@
 class Bowling
-  attr_reader :rolls
-  def initialize(rolls)
-    @rolls = rolls
+  attr_reader :rolls, :config
+  def initialize(rolls, config=Rules::CONFIGS[:TENPIN])
+    @rolls  = rolls
+    @config = config
   end
 
   def score
@@ -12,7 +13,7 @@ class Bowling
 
     while current_frame < max_frames
       current_frame += 1
-      rule = Rules.new.scoring_rule(remaining_rolls)
+      rule = Rules.new(config: config).scoring_rule(remaining_rolls)
 
       if (remaining_rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
         if remaining_rolls.size >=  rule[:num_rolls_to_score]
