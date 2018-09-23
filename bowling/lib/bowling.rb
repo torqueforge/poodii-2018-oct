@@ -28,6 +28,16 @@ class Bowling
       #   next
       # end
 
+      rule = scoring_rule(remaining_rolls)
+
+      if (remaining_rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
+        if remaining_rolls.size >=  rule[:num_rolls_to_score]
+          running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
+          remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
+        end
+        next
+      end
+
       _num_triggering_rolls =  1
       _triggering_value     = 10
       _num_rolls_to_score   =  3
