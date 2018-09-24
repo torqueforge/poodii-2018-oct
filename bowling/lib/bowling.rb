@@ -13,7 +13,7 @@ class Frames
   end
 
   def score
-    list.reduce(0) {|sum, frame| sum += frame.score}
+    list.reduce(0) {|sum, frame| sum += frame.score.to_i}
   end
 
   def each
@@ -21,7 +21,8 @@ class Frames
   end
 end
 
-
+# Yes, tis hierachy has problems, but soon you'll be tasked to
+# solve them.
 class Frame
   attr_reader :normal_rolls, :bonus_rolls
   def initialize(normal_rolls: nil, bonus_rolls: nil)
@@ -31,6 +32,12 @@ class Frame
 
   def score
     (normal_rolls + bonus_rolls).sum
+  end
+end
+
+class PendingFrame < Frame
+  def score
+    nil
   end
 end
 
@@ -107,18 +114,20 @@ class Variant
       current_frame += 1
       num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
 
-      roll_scores =
+      # The problem with pending rolls showing up a 0 originates right here.
+      # We need a kind of frame that returns nothing (nil) for rolls that haven't happened.
+      frame_class =
         if remaining_rolls.size >=  num_rolls_to_score
-          roll_scores
+          Frame
         else
-          [0]
+          PendingFrame
         end
 
       normal = roll_scores.take(num_triggering_rolls)
       bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
 
       remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << Frame.new(normal_rolls: normal, bonus_rolls: bonus)
+      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus)
     end
 
     frame_list

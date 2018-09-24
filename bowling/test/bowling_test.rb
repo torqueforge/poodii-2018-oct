@@ -154,7 +154,7 @@ class VariantTest < Minitest::Test
 
   def test_last_frame
     f = Variant.new(config: @config).framify(@input_rolls).last
-    assert_equal 0, f.score
+    assert_nil f.score
   end
 end
 
