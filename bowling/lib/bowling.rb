@@ -6,6 +6,46 @@ class Game
     initialize_players
   end
 
+  # Requirement: Prompt until the current player's turn is complete
+  #
+  # It feels like a game loop can no longer be avoided:
+  #   for each frame
+  #     for each player
+  #       until the player's turn is over
+  #         prompt the player for a roll
+  #         (eventually) print the player's scoresheet
+  #
+  # This brings up lots of issues:
+  #
+  #   1) How does Game know how many frames to ask the players to roll?
+  #
+  #   2) Frames and Frame are currently immutable.  The Frame factory
+  #       expects to be passed the player's complete roll history.
+  #
+  #       Now that we're accumulating rolls one-by-one, we must either:
+  #
+  #       a) hold onto a list of the incoming rolls by player and generate
+  #          an entirely new Frames object with each new roll,
+  #         or
+  #       b) create a Frames for each player when the game starts, and then
+  #           mutate the player's current frame object with each new roll.
+  #
+  #   3a) If we decide to use the (immutable) Frames/Frame as is, where
+  #       then does the raw roll history get stored? Here in Game, or
+  #       in some other object, perhaps Player?
+  #
+  #   3b) If we decide to mutate Frames/Frame, what changes are needed?
+  #
+  #   4) How do we know when a player's turn is complete?
+  #       In most frames, a player rolls just their normal rolls.
+  #       In the _final_ frame, a player rolls their nomal rolls and the bonus rolls
+  #         to which they are entitled.
+  #       Where should 'is the turn complete' knowledge reside in our app?
+  #
+  #   5) This is a bunch of information, which might be spread out over
+  #        a number of objects.
+  #      How many of these objects does Game get to know about?
+
   def play
     output.print "\n\nFee now starting frame 1"
   end
