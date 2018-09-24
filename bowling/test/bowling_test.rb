@@ -221,11 +221,6 @@ end
 
 class DetailedScoresheetTest < Minitest::Test
   def setup
-    incomplete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0])
-    @incomplete_frames = Frames.for(rolls: incomplete_rolls)
-
-    complete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0] + [7,3] + ([3,4] * 3))
-    @complete_frames = Frames.for(rolls: complete_rolls)
     @io = StringIO.new
   end
 
