@@ -27,6 +27,13 @@ class Game
 
       frame_num += 1
     end
+
+    output.print "\n\nGame over, thanks for playing!"
+    output.print "\nFinal Scores:"
+    players.each {|player|
+      output.print "\n  #{player.name} #{player.score}"
+      }
+    output.puts
   end
 
   def initialize_players
@@ -72,6 +79,10 @@ class Player
     @config = config
     @rolls  = rolls
     @frames = Frames.for(rolls: rolls, config: config)
+  end
+
+  def score
+    frames.score
   end
 
   def new_roll(roll)
