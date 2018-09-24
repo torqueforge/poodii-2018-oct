@@ -276,17 +276,29 @@ class GameTest < Minitest::Test
     @output = StringIO.new
   end
 
+  def start_game
+   @game = Game.new(input: @input, output: @output)
+  end
+
   def test_prompts_for_player_names
     player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
 
-    Game.new(input: @input, output: @output)
+    start_game
     assert_equal player_name_prompt, @output.string
   end
 
   def test_defaults_to_stooges_players
     expected = ["Larry", "Curly", "Moe"]
-    game = Game.new(input: @input, output: @output)
+    start_game
 
-    assert_equal expected, game.get_player_names
+    assert_equal expected, @game.get_player_names
+  end
+
+  def test_accepts_user_specified_players
+    @input.string = "\nFee, Fie, Foe"
+    expected = ["Fee", "Fie", "Foe"]
+    start_game
+
+    assert_equal expected, @game.get_player_names
   end
 end

@@ -8,7 +8,7 @@ class Game
 
   def get_player_names
     output.print "\nWho's playing? (Larry, Curly, Moe) >"
-    ["Larry", "Curly", "Moe"]
+    ((i = input.gets.chomp).empty? ? "Larry, Curly, Moe" : i).gsub(" ", "").split(",")
   end
 end
 
