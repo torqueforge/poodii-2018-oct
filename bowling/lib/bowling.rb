@@ -1,9 +1,104 @@
-# New Requirement: Interactive Game
-#
-# Let's play!  Create a console-based interactive multi-user bowling game.
-# Prompt for users and game types, and then alternate between players,
-# prompting for rolls.  After each turn, display a scoresheet.  When
-# the game ends, display a summary.
+#####################################################################
+class Game
+  attr_reader :input, :output, :scoresheet_output,
+              :num_frames, :players
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
+    @input  = input
+    @output = output
+    @scoresheet_output = scoresheet_output
+
+    @players    = initialize_players
+    @num_frames = determine_num_frames
+  end
+
+  def play
+    frame_num = 1
+    while frame_num <= num_frames
+      players.each_with_index {|player, i|
+        output.print "\n\n#{player.name} now starting frame #{frame_num}"
+
+        while !player.turn_complete?(frame_num)
+          output.print "\n Roll? >"
+          roll   = listen("0").to_i
+          player = update_player(i, player, roll)
+        end
+
+        DetailedScoresheet.new(frames: player.frames, io: scoresheet_output).render
+      }
+
+      frame_num += 1
+    end
+
+    output.print "\n\nGame over, thanks for playing!"
+    output.print "\nFinal Scores:"
+    players.each {|player|
+      output.print "\n  #{player.name} #{player.score}"
+      }
+    output.puts
+  end
+
+  def initialize_players
+    [].tap {|players|
+      get_player_names.each {|name|
+        type = get_player_game_type(name).to_sym
+        players << Player.new(name: name, config: Variant::CONFIGS.fetch(type))
+      }
+    }
+  end
+
+  def get_player_names
+    output.print "\nWho's playing? (Larry, Curly, Moe) >"
+    listen("Larry, Curly, Moe").gsub(" ", "").split(",")
+  end
+
+  def get_player_game_type(name)
+    output.print "\nWhich game would #{name} like to play? (TENPIN) >"
+    listen("TENPIN")
+  end
+
+  def listen(default)
+    ((i = input.gets.chomp).empty? ? default : i)
+  end
+
+  def determine_num_frames
+    players.first.num_frames_in_game
+  end
+
+  def update_player(i, old_player, roll)
+    new_player = old_player.new_roll(roll)
+    players[i] = new_player
+    new_player
+  end
+end
+
+
+#####################################################################
+class Player
+  attr_reader :name, :rolls, :config, :frames
+
+  def initialize(name:, config:, rolls:[])
+    @name   = name
+    @config = config
+    @rolls  = rolls
+    @frames = Frames.for(rolls: rolls, config: config)
+  end
+
+  def score
+    frames.score
+  end
+
+  def new_roll(roll)
+    Player.new(name: name, config: config, rolls: rolls << roll)
+  end
+
+  def num_frames_in_game
+    frames.size
+  end
+
+  def turn_complete?(frame_number)
+    frames.turn_complete?(frame_number)
+  end
+end
 
 
 #####################################################################
@@ -30,6 +125,14 @@ class Frames
       running_scores << frame.running_score(running_scores.last)}
   end
 
+  def turn_complete?(i)
+    frame(i).turn_complete?
+  end
+
+  def frame(i)
+    list[i-1]
+  end
+
   def each
     list.each {|frame| yield frame}
   end
@@ -42,10 +145,11 @@ end
 
 #####################################################################
 class Frame
-  attr_reader :normal_rolls, :bonus_rolls
-  def initialize(normal_rolls: nil, bonus_rolls: nil)
+  attr_reader :normal_rolls, :bonus_rolls, :turn_rule
+  def initialize(normal_rolls:, bonus_rolls:, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
+    @turn_rule    = turn_rule
   end
 
   def score
@@ -55,15 +159,54 @@ class Frame
   def running_score(previous)
     previous.to_i + score
   end
+
+  def turn_complete?
+    turn_rule.turn_complete?(self)
+  end
+
+  def normal_rolls_complete?
+    true
+  end
+
+  def bonus_rolls_complete?
+    true
+  end
 end
 
-class PendingFrame < Frame
+class MissingNormalRollsFrame < Frame
   def score
     nil
   end
 
   def running_score(previous)
     nil
+  end
+
+  def normal_rolls_complete?
+    false
+  end
+
+  def bonus_rolls_complete?
+    false
+  end
+end
+
+class MissingBonusRollsFrame < MissingNormalRollsFrame
+  def normal_rolls_complete?
+    true
+  end
+end
+
+#####################################################################
+class GeneralTurnRule
+  def turn_complete?(frame)
+    frame.normal_rolls_complete?
+  end
+end
+
+class FinalFrameTurnRule
+  def turn_complete?(frame)
+    (frame.normal_rolls_complete? and frame.bonus_rolls_complete?)
   end
 end
 
@@ -125,6 +268,7 @@ class Variant
   CONFIGS = {
     :TENPIN => {
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :max_rolls_per_turn => 2,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
@@ -134,6 +278,7 @@ class Variant
     :NOTAP => {
       :max_rolls_per_turn => 2,
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 9, num_rolls_to_score: 3},
@@ -142,6 +287,7 @@ class Variant
     :DUCKPIN => {
       :max_rolls_per_turn => 3,
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
@@ -150,6 +296,7 @@ class Variant
     :LOWBALL => {
       :max_rolls_per_turn => 2,
       :parser => "LowballRollParser",
+      :num_frames         => 10,
       :scoring_rules => [ # The current structure won't work for LOWBALL
          ]
       }
@@ -162,34 +309,53 @@ class Variant
   end
 
   def framify(rolls)
-    frame_list    = []
-    current_frame = 0
-    max_frames    = 10
-    remaining_rolls = rolls
+    frame_list        = []
+    current_frame_num = 0
+    remaining_rolls   = rolls
 
-    while current_frame < max_frames
-      current_frame += 1
-      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
-
-      frame_class =
-        if remaining_rolls.size >=  num_rolls_to_score
-          Frame
-        else
-          PendingFrame
-        end
-
-      normal = roll_scores.take(num_triggering_rolls)
-      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
-
-      remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus)
+    while current_frame_num < config.num_frames
+      current_frame_num += 1
+      frame = extract_frame(remaining_rolls, current_frame_num)
+      frame_list << frame
+      remaining_rolls = remaining_rolls.drop(frame.normal_rolls.size)
     end
 
     frame_list
   end
 
+  private
+
+  def extract_frame(rolls, frame_num)
+    num_triggering_rolls, num_rolls_to_score, roll_scores = parse(rolls)
+
+    normal_rolls = roll_scores.take(num_triggering_rolls)
+    bonus_rolls  = (roll_scores[num_triggering_rolls...num_rolls_to_score] || [])
+    frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
+    turn_rule    = turn_rule(frame_num)
+
+    frame_class.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls, turn_rule: turn_rule)
+  end
+
   def parse(rolls)
     parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
+  end
+
+  def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
+    if rolls.size >=  num_rolls_to_score
+      Frame
+    elsif rolls.size < num_triggering_rolls
+      MissingNormalRollsFrame
+    else
+      MissingBonusRollsFrame
+    end
+  end
+
+  def turn_rule(current_frame_num)
+    if current_frame_num == config.num_frames
+      FinalFrameTurnRule
+    else
+      GeneralTurnRule
+    end.new
   end
 end
 
