@@ -13,8 +13,8 @@ class Game
   def initialize_players
     [].tap {|players|
       get_player_names.each {|name|
-        type = get_player_game_type(name)
-
+        type = get_player_game_type(name).to_sym
+        players << Player.new(name: name, config: Variant::CONFIGS.fetch(type))
       }
     }
   end
@@ -31,6 +31,17 @@ class Game
 
   def listen(default)
     ((i = input.gets.chomp).empty? ? default : i)
+  end
+end
+
+
+class Player
+  attr_reader :name, :rolls, :config
+
+  def initialize(name:, config:, rolls:[])
+    @name   = name
+    @config = config
+    @rolls  = rolls
   end
 end
 
