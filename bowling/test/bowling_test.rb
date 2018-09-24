@@ -229,6 +229,11 @@ class DetailedScoresheetTest < Minitest::Test
     @io = StringIO.new
   end
 
+  def test_title_line
+    expected = "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|"
+    assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).title_line
+  end
+
   def test_incomplete_game_pinfall_line
     expected = "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |"
     assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).pinfall_line
@@ -257,6 +262,16 @@ class DetailedScoresheetTest < Minitest::Test
   def test_complete_game_score_line
     expected = "SCORE: | 30.    | 21.    | 13.    |  3.    |  6.    |  4.    | 13.    |  7.    |  7.    |  7.    |"
     assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).score_line
+  end
+
+  def test_complete_game_total_line
+    expected = "TOTAL: | 30      | 51      | 64      | 67      | 73      | 77      | 90      | 97      |104      |111      |"
+    assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).total_line
+  end
+
+  def test_incomplete_game_total_line
+    expected = "TOTAL: | 30      | 51      | 64      | 67      | 73      | 77      |         |         |         |         |"
+    assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).total_line
   end
 
   # def test_scoresheet_for_incomplete_game
