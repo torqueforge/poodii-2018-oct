@@ -71,10 +71,11 @@ end
 
 #####################################################################
 class Frame
-  attr_reader :normal_rolls, :bonus_rolls
-  def initialize(normal_rolls:, bonus_rolls:)
+  attr_reader :normal_rolls, :bonus_rolls, :turn_rule
+  def initialize(normal_rolls:, bonus_rolls:, turn_rule: nil)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
+    @turn_rule    = turn_rule
   end
 
   def score
@@ -83,6 +84,10 @@ class Frame
 
   def running_score(previous)
     previous.to_i + score
+  end
+
+  def turn_complete?
+    turn_rule.turn_complete?(self)
   end
 end
 
