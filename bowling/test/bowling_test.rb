@@ -128,7 +128,7 @@ end
 
 class TestParserWhichAlwaysReturnsTwoRollsOfOnePin
   def parse(rolls:, frame_configs:)
-    [2,2,[1,1]]
+    [2,2,rolls.take(2)]
   end
 end
 
@@ -136,13 +136,10 @@ class VariantTest < Minitest::Test
   def setup
     @config = {
       :parser     => "TestParserWhichAlwaysReturnsTwoRollsOfOnePin",
-      :num_frames => 4,
+      :num_frames => 3,
     }
 
-    # Notice that the parser puts two rolls in a frame, so
-    # an array with 5 things should get us 3 frames, the first two
-    # of which have a score.
-    @input_rolls = [nil] * 5
+    @input_rolls = [1] * 5
   end
 
   def test_first_frame
