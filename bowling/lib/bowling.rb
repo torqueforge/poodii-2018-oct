@@ -67,67 +67,43 @@ class DetailedScoresheet
   end
 
   def render
-    out.puts title_line
-    out.puts pinfall_line
-    out.puts bonus_line
-    out.puts score_line
-    out.puts total_line
+    out.puts dasherized(frame_summary_line("FRAME", 1.upto(frames.size)))
+    out.puts frame_detail_line("PINS",  :normal_rolls)
+    out.puts frame_detail_line("BONUS", :bonus_rolls)
+    out.puts frame_detail_line("SCORE", :score, "  ")
+    out.puts frame_summary_line("TOTAL", frames.running_scores)
   end
 
   private
 
-  def title_line
-    line =
-      ("FRAME: |" +
-        1.upto(frames.size).map {|frame_num|
-          frame_num.to_s.rjust(3).ljust(frames.max_rolls_per_turn * 3) +
-          "  "
-        }.join("|") +
-         "|")
+  def frame_summary_line(title, items)
+    enclosed(title) {
+      items.map {|item|
+        item.to_s.rjust(3).ljust((frames.max_rolls_per_turn-1) * 4) + "    "
+      }
+    }
+  end
 
+  def frame_detail_line(title, message, sep=". ")
+    enclosed(title) {
+      frames.map {|frame|
+        " " + format_details(frame.send(message), frames.max_rolls_per_turn).join(sep) + " "
+      }
+    }
+  end
+
+  def enclosed(title)
+    "#{(title + ':').ljust(6)} |" + (yield).join("|") + "|"
+  end
+
+  def format_details(list, minimum_num_items)
+    ([list].flatten.compact.map {|item|
+      sprintf("%2d", item) } + Array.new(minimum_num_items, '  ')).
+        first(minimum_num_items)
+  end
+
+  def dasherized(line)
     line[0..7] + line[8..-1].gsub(" ", "-")
-  end
-
-  def pinfall_line
-    ("PINS:  |" +
-      frames.map {|frame|
-        " " +
-          ([frame.normal_rolls].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
-            first(frames.max_rolls_per_turn).join(". ") +
-        " "
-      }.join("|") +
-       "|")
-  end
-
-  def bonus_line
-    ("BONUS: |" +
-      frames.map {|frame|
-        " " +
-          ([frame.bonus_rolls].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
-            first(frames.max_rolls_per_turn).join(". ") +
-        " "
-      }.join("|") +
-       "|")
-  end
-
-  def score_line
-    ("SCORE: |" +
-      frames.map {|frame|
-        " " +
-          ([frame.score].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
-            first(frames.max_rolls_per_turn).join("  ") +
-        " "
-      }.join("|") +
-       "|")
-  end
-
-  def total_line
-    ("TOTAL: |" +
-      frames.running_scores.map {|running_score|
-        running_score.to_s.rjust(3).ljust(frames.max_rolls_per_turn * 3) +
-        "  "
-      }.join("|") +
-       "|")
   end
 end
 
