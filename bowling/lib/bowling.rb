@@ -21,7 +21,7 @@ class Game
           roll   = listen("0").to_i
           player = update_player(i, player, roll)
         end
-        # What happens when we get new kinds of scoresheets?
+
         DetailedScoresheet.new(frames: player.frames, io: scoresheet_output).render
       }
 
