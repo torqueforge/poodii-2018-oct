@@ -72,7 +72,7 @@ end
 #####################################################################
 class Frame
   attr_reader :normal_rolls, :bonus_rolls, :turn_rule
-  def initialize(normal_rolls:, bonus_rolls:, turn_rule:)
+  def initialize(normal_rolls:, bonus_rolls:, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
     @turn_rule    = turn_rule
