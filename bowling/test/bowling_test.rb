@@ -272,7 +272,7 @@ end
 
 class GameTest < Minitest::Test
   def setup
-    @input  = StringIO.new
+    @input  = StringIO.new("\n\n\n\n\n")
     @output = StringIO.new
 
     @player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
@@ -291,30 +291,39 @@ class GameTest < Minitest::Test
   end
 
   def test_prompts_for_player_names
-    @input.string = "\n"
     expected = @player_name_prompt
     start_game
     assert starts_with?(expected, @output), "Expected #{@output}\nto start with #{expected}"
   end
 
   def test_defaults_to_stooges_players
-    @input.string = "\n\n"
     expected = ["Larry", "Curly", "Moe"]
     start_game
     assert_equal expected, @game.get_player_names
   end
 
   def test_accepts_user_specified_players
-    @input.string = "\nFee, Fie, Foe"
+    @input.string = @mock_answers + "Fee, Fie, Foe\n"
     expected = ["Fee", "Fie", "Foe"]
     start_game
     assert_equal expected, @game.get_player_names
   end
 
-  def test_prompts_players_for_game_type
+  def test_prompts_players_for_game_variant
     @input.string = @mock_answers
     expected = @expected_prompts
     start_game
     assert_equal expected, @output.string
+  end
+
+  def test_defaults_to_tenpin_game_variant
+    start_game
+    assert_equal "TENPIN", @game.get_player_game_type("fake name to test type prompt")
+  end
+
+  def test_accepts_user_specified_game_variant
+    @input.string = @mock_answers + "DUCKPIN\n"
+    start_game
+    assert_equal "DUCKPIN", @game.get_player_game_type("fake name to test type prompt")
   end
 end

@@ -22,7 +22,7 @@ class Game
 
   def get_player_game_type(name)
     output.print "\nWhich game would #{name} like to play? (TENPIN) >"
-
+    ((i = input.gets.chomp).empty? ? "TENPIN" : i)
   end
 end
 
