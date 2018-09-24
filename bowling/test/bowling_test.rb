@@ -280,6 +280,15 @@ class GameTest < Minitest::Test
     @expected_prompts   = (@player_name_prompt + ["Fee", "Fie", "Foe"].map{|name| @game_type_prompt % name}.join)
 
     @mock_answers       = "Fee, Fie, Foe\nTENPIN\nDUCKPIN\nNOTAP\n"
+
+    @mixed_tenpin_game   = ([[6,2]] + ([[10]] * 2) + [[1,2]] + [[3,3]] + [[4,0]] + [[7,3]] + ([[3,4]] * 3))
+    @mixed_duckkpin_game = (([[10]] * 3) + [[1,2,3]] + [[3,3,0]] + [[4,0,0]] + [[7,3]] + ([[3,4,1]] * 3))
+    @strike_tenpin_game  = ([[10]] * 9) + [[10,10,10]]
+
+    @three_alternating_player_game_pinfalls =
+      @mixed_tenpin_game.zip(@mixed_duckkpin_game, @strike_tenpin_game).join("\n")
+
+    @mock_answers_with_pinfalls = @mock_answers + @three_alternating_player_game_pinfalls
   end
 
   def starts_with?(str, io)
@@ -288,6 +297,10 @@ class GameTest < Minitest::Test
 
   def start_game
    @game = Game.new(input: @input, output: @output)
+  end
+
+  def assert_starts_with(expected, output)
+    assert starts_with?(expected, output), "Expected\n  #{@output.string.inspect}\nto start with\n  #{expected.inspect}"
   end
 
   def test_prompts_for_player_names
@@ -328,10 +341,18 @@ class GameTest < Minitest::Test
   end
 
   def test_prompts_players_for_rolls
-    @input.string = @mock_answers
+    @input.string = @mock_answers_with_pinfalls
     expected = @expected_prompts + "\n\nFee now starting frame 1"
     start_game
     @game.play
-    assert starts_with?(expected, @output), "Expected\n  #{@output.string.inspect}\nto start with\n  #{expected.inspect}"
+    assert_starts_with(expected, @output)
+  end
+
+  def test_prompts_for_rolls_until_turn_is_complete
+    @input.string = @mock_answers_with_pinfalls
+    expected = @expected_prompts + "\n\nFee now starting frame 1\n Roll? >\n Roll? >\n"
+    start_game
+    @game.play
+    assert_starts_with(expected, @output)
   end
 end
