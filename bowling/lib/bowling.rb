@@ -1,3 +1,4 @@
+#####################################################################
 class Frames
   include Enumerable
 
@@ -30,8 +31,8 @@ class Frames
   end
 end
 
-# Yes, tis hierachy has problems, but soon you'll be tasked to
-# solve them.
+
+#####################################################################
 class Frame
   attr_reader :normal_rolls, :bonus_rolls
   def initialize(normal_rolls: nil, bonus_rolls: nil)
@@ -59,6 +60,7 @@ class PendingFrame < Frame
 end
 
 
+#####################################################################
 class DetailedScoresheet
   attr_reader :frames, :out
   def initialize(frames:, io: $stdout)
@@ -108,6 +110,7 @@ class DetailedScoresheet
 end
 
 
+#####################################################################
 require 'ostruct'
 
 class Variant
@@ -160,8 +163,6 @@ class Variant
       current_frame += 1
       num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
 
-      # The problem with pending rolls showing up a 0 originates right here.
-      # We need a kind of frame that returns nothing (nil) for rolls that haven't happened.
       frame_class =
         if remaining_rolls.size >=  num_rolls_to_score
           Frame
