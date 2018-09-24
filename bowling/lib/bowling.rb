@@ -309,42 +309,53 @@ class Variant
   end
 
   def framify(rolls)
-    frame_list    = []
-    current_frame = 0
-    remaining_rolls = rolls
+    frame_list        = []
+    current_frame_num = 0
+    remaining_rolls   = rolls
 
-    while current_frame < config.num_frames
-      current_frame += 1
-      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
-
-      frame_class =
-        if remaining_rolls.size >=  num_rolls_to_score
-          Frame
-        elsif remaining_rolls.size < num_triggering_rolls
-          MissingNormalRollsFrame
-        else
-          MissingBonusRollsFrame
-        end
-
-      turn_rule =
-        if current_frame == config.num_frames
-          FinalFrameTurnRule
-        else
-          GeneralTurnRule
-        end.new
-
-      normal = roll_scores.take(num_triggering_rolls)
-      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
-
-      remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus, turn_rule: turn_rule)
+    while current_frame_num < config.num_frames
+      current_frame_num += 1
+      frame = extract_frame(remaining_rolls, current_frame_num)
+      frame_list << frame
+      remaining_rolls = remaining_rolls.drop(frame.normal_rolls.size)
     end
 
     frame_list
   end
 
+  private
+
+  def extract_frame(rolls, frame_num)
+    num_triggering_rolls, num_rolls_to_score, roll_scores = parse(rolls)
+
+    normal_rolls = roll_scores.take(num_triggering_rolls)
+    bonus_rolls  = (roll_scores[num_triggering_rolls...num_rolls_to_score] || [])
+    frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
+    turn_rule    = turn_rule(frame_num)
+
+    frame_class.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls, turn_rule: turn_rule)
+  end
+
   def parse(rolls)
     parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
+  end
+
+  def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
+    if rolls.size >=  num_rolls_to_score
+      Frame
+    elsif rolls.size < num_triggering_rolls
+      MissingNormalRollsFrame
+    else
+      MissingBonusRollsFrame
+    end
+  end
+
+  def turn_rule(current_frame_num)
+    if current_frame_num == config.num_frames
+      FinalFrameTurnRule
+    else
+      GeneralTurnRule
+    end.new
   end
 end
 
