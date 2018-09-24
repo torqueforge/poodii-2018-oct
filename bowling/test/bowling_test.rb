@@ -288,5 +288,20 @@ class DetailedScoresheetTest < Minitest::Test
     DetailedScoresheet.new(frames: frames, io: @io).render
     assert_equal expected, @io.string
   end
+
+  def test_scoresheet_for_complete_game
+    rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0] + [7,3] + ([3,4] * 3))
+    frames = Frames.for(rolls: rolls)
+
+    expected =
+      "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|\n" +
+      "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |  7.  3 |  3.  4 |  3.  4 |  3.  4 |\n" +
+      "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |  3.    |   .    |   .    |   .    |\n" +
+      "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     | 13     |  7     |  7     |  7     |\n" +
+      "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     | 90     | 97     |104     |111     |\n"
+
+    DetailedScoresheet.new(frames: frames, io: @io).render
+    assert_equal expected, @io.string
+  end
 end
 
