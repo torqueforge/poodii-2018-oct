@@ -271,12 +271,22 @@ class DetailedScoresheetTest < Minitest::Test
 end
 
 class GameTest < Minitest::Test
+  def setup
+    @input  = StringIO.new("\n\n")
+    @output = StringIO.new
+  end
+
   def test_prompts_for_player_names
-    input  = StringIO.new("\n\n")
-    output = StringIO.new
     player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
 
-    Game.new(input: input, output: output)
-    assert_equal player_name_prompt, output.string
+    Game.new(input: @input, output: @output)
+    assert_equal player_name_prompt, @output.string
+  end
+
+  def test_defaults_to_stooges_players
+    expected = ["Larry", "Curly", "Moe"]
+    game = Game.new(input: @input, output: @output)
+
+    assert_equal expected, game.get_player_names
   end
 end

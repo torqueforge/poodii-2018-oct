@@ -3,7 +3,12 @@ class Game
   def initialize(input: $stdin, output: $stdout)
     @input  = input
     @output = output
+    get_player_names
+  end
+
+  def get_player_names
     output.print "\nWho's playing? (Larry, Curly, Moe) >"
+    ["Larry", "Curly", "Moe"]
   end
 end
 
