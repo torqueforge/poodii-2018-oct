@@ -292,16 +292,24 @@ class GameTest < Minitest::Test
     @mock_answers_with_pinfalls = @mock_answers + @three_alternating_player_game_pinfalls
   end
 
+  def start_game
+    @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output)
+  end
+
   def starts_with?(str, io)
     io.string[0...str.size] == str
   end
 
-  def start_game
-   @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output)
+  def ends_with?(str, io)
+    io.string[(str.size * -1)..-1] == str
   end
 
   def assert_starts_with(expected, output)
     assert starts_with?(expected, output), "Expected ->\n  #{output.string[0..(expected.size+20)]}\n---------\nTo start with ->\n  #{expected}"
+  end
+
+  def assert_ends_with(expected, output)
+    assert ends_with?(expected, output),  "Expected ->\n  #{output.string[(expected.size * -1)..-1]}\n---------\nTo start with ->\n  #{expected}"
   end
 
   def test_prompts_for_player_names
@@ -363,5 +371,13 @@ class GameTest < Minitest::Test
     start_game
     @game.play
     assert_starts_with(expected, @scoresheet_output)
+  end
+
+  def test_prints_game_summary
+    @input.string = @mock_answers_with_pinfalls
+    expected = "Game over, thanks for playing!\nFinal Scores:\n  Fee 89\n  Fie 117\n  Foe 300\n"
+    start_game
+    @game.play
+    assert_ends_with(expected, @output)
   end
 end
