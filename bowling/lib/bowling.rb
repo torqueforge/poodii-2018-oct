@@ -72,7 +72,7 @@ end
 #####################################################################
 class Frame
   attr_reader :normal_rolls, :bonus_rolls
-  def initialize(normal_rolls: nil, bonus_rolls: nil)
+  def initialize(normal_rolls:, bonus_rolls:)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
   end
