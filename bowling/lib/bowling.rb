@@ -86,20 +86,6 @@ class Frame
   end
 end
 
-class PendingFrame < Frame
-  def score
-    nil
-  end
-
-  def running_score(previous)
-    nil
-  end
-end
-
-# I'm already uncomfortable about using inheritance
-# in the PendingFrame class above, and replacing PendingFrame
-# with the two new classes below exacerbates my fears.
-# Regardless, let's proceed and see what happens.
 class MissingNormalRollsFrame < Frame
   def score
     nil
