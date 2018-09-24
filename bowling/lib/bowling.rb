@@ -66,6 +66,14 @@ class DetailedScoresheet
     @out    = io
   end
 
+  def render
+    out.puts title_line
+    out.puts pinfall_line
+    out.puts bonus_line
+    out.puts score_line
+    out.puts total_line
+  end
+
   def title_line
     line =
       ("FRAME: |" +
@@ -105,7 +113,7 @@ class DetailedScoresheet
       frames.map {|frame|
         " " +
           ([frame.score].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
-            first(frames.max_rolls_per_turn).join(". ") +
+            first(frames.max_rolls_per_turn).join("  ") +
         " "
       }.join("|") +
        "|")
@@ -115,7 +123,7 @@ class DetailedScoresheet
     ("TOTAL: |" +
       frames.running_scores.map {|running_score|
         running_score.to_s.rjust(3).ljust(frames.max_rolls_per_turn * 3) +
-        "   "
+        "  "
       }.join("|") +
        "|")
   end
