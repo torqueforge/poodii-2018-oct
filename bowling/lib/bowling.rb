@@ -231,8 +231,10 @@ class Variant
       frame_class =
         if remaining_rolls.size >=  num_rolls_to_score
           Frame
+        elsif remaining_rolls.size >=  num_triggering_rolls
+          MissingNormalRollsFrame
         else
-          PendingFrame
+          MissingBonusRollsFrame
         end
 
       normal = roll_scores.take(num_triggering_rolls)
