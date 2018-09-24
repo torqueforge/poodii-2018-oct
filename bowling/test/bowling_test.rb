@@ -272,8 +272,18 @@ end
 
 class GameTest < Minitest::Test
   def setup
-    @input  = StringIO.new("\n\n")
+    @input  = StringIO.new
     @output = StringIO.new
+
+    @player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
+    @game_type_prompt   = "\nWhich game would %s like to play? (TENPIN) >"
+    @expected_prompts   = (@player_name_prompt + ["Fee", "Fie", "Foe"].map{|name| @game_type_prompt % name}.join)
+
+    @mock_answers       = "Fee, Fie, Foe\nTENPIN\nDUCKPIN\nNOTAP\n"
+  end
+
+  def starts_with?(str, io)
+    io.string[0...str.size] == str
   end
 
   def start_game
@@ -281,16 +291,16 @@ class GameTest < Minitest::Test
   end
 
   def test_prompts_for_player_names
-    player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
-
+    @input.string = "\n"
+    expected = @player_name_prompt
     start_game
-    assert_equal player_name_prompt, @output.string
+    assert starts_with?(expected, @output), "Expected #{@output}\nto start with #{expected}"
   end
 
   def test_defaults_to_stooges_players
+    @input.string = "\n\n"
     expected = ["Larry", "Curly", "Moe"]
     start_game
-
     assert_equal expected, @game.get_player_names
   end
 
@@ -298,7 +308,13 @@ class GameTest < Minitest::Test
     @input.string = "\nFee, Fie, Foe"
     expected = ["Fee", "Fie", "Foe"]
     start_game
-
     assert_equal expected, @game.get_player_names
+  end
+
+  def test_prompts_players_for_game_type
+    @input.string = @mock_answers
+    expected = @expected_prompts
+    start_game
+    assert_equal expected, @output.string
   end
 end

@@ -3,12 +3,26 @@ class Game
   def initialize(input: $stdin, output: $stdout)
     @input  = input
     @output = output
-    get_player_names
+    initialize_players
+  end
+
+  def initialize_players
+    [].tap {|players|
+      get_player_names.each {|name|
+        type = get_player_game_type(name)
+
+      }
+    }
   end
 
   def get_player_names
     output.print "\nWho's playing? (Larry, Curly, Moe) >"
     ((i = input.gets.chomp).empty? ? "Larry, Curly, Moe" : i).gsub(" ", "").split(",")
+  end
+
+  def get_player_game_type(name)
+    output.print "\nWhich game would #{name} like to play? (TENPIN) >"
+
   end
 end
 
