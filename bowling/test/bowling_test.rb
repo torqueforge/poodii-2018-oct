@@ -134,7 +134,10 @@ end
 
 class VariantTest < Minitest::Test
   def setup
-    @config = { :parser => "TestParserWhichAlwaysReturnsTwoRollsOfOnePin"}
+    @config = {
+      :parser     => "TestParserWhichAlwaysReturnsTwoRollsOfOnePin",
+      :num_frames => 4,
+    }
 
     # Notice that the parser puts two rolls in a frame, so
     # an array with 5 things should get us 3 frames, the first two

@@ -1,3 +1,4 @@
+#####################################################################
 class Game
   attr_reader :input, :output, :scoresheet_output,
               :num_frames, :players
@@ -71,6 +72,7 @@ class Game
 end
 
 
+#####################################################################
 class Player
   attr_reader :name, :rolls, :config, :frames
 
@@ -266,6 +268,7 @@ class Variant
   CONFIGS = {
     :TENPIN => {
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :max_rolls_per_turn => 2,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
@@ -275,6 +278,7 @@ class Variant
     :NOTAP => {
       :max_rolls_per_turn => 2,
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 9, num_rolls_to_score: 3},
@@ -283,6 +287,7 @@ class Variant
     :DUCKPIN => {
       :max_rolls_per_turn => 3,
       :parser => "StandardRollParser",
+      :num_frames         => 10,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
@@ -291,6 +296,7 @@ class Variant
     :LOWBALL => {
       :max_rolls_per_turn => 2,
       :parser => "LowballRollParser",
+      :num_frames         => 10,
       :scoring_rules => [ # The current structure won't work for LOWBALL
          ]
       }
@@ -308,7 +314,7 @@ class Variant
     max_frames    = 10
     remaining_rolls = rolls
 
-    while current_frame < max_frames
+    while current_frame < config.num_frames
       current_frame += 1
       num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
 
