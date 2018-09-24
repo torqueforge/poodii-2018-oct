@@ -311,7 +311,6 @@ class Variant
   def framify(rolls)
     frame_list    = []
     current_frame = 0
-    max_frames    = 10
     remaining_rolls = rolls
 
     while current_frame < config.num_frames
@@ -328,7 +327,7 @@ class Variant
         end
 
       turn_rule =
-        if current_frame == max_frames
+        if current_frame == config.num_frames
           FinalFrameTurnRule
         else
           GeneralTurnRule
