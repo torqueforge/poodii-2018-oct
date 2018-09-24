@@ -17,12 +17,16 @@ class Game
 
   def get_player_names
     output.print "\nWho's playing? (Larry, Curly, Moe) >"
-    ((i = input.gets.chomp).empty? ? "Larry, Curly, Moe" : i).gsub(" ", "").split(",")
+    listen("Larry, Curly, Moe").gsub(" ", "").split(",")
   end
 
   def get_player_game_type(name)
     output.print "\nWhich game would #{name} like to play? (TENPIN) >"
-    ((i = input.gets.chomp).empty? ? "TENPIN" : i)
+    listen("TENPIN")
+  end
+
+  def listen(default)
+    ((i = input.gets.chomp).empty? ? default : i)
   end
 end
 
