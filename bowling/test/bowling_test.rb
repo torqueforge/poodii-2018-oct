@@ -300,7 +300,7 @@ class GameTest < Minitest::Test
   end
 
   def assert_starts_with(expected, output)
-    assert starts_with?(expected, output), "Expected\n  #{@output.string.inspect}\nto start with\n  #{expected.inspect}"
+    assert starts_with?(expected, output), "Expected ->\n  #{@output.string[0..(expected.size+20)]}\n---------\nTo start with ->\n  #{expected}"
   end
 
   def test_prompts_for_player_names

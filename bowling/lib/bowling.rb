@@ -1,13 +1,29 @@
 class Game
-  attr_reader :input, :output
+  attr_reader :input, :output, :num_frames, :players
   def initialize(input: $stdin, output: $stdout)
     @input  = input
     @output = output
-    initialize_players
+    @players    = initialize_players
+    @num_frames = determine_num_frames
   end
 
   def play
-    output.print "\n\nFee now starting frame 1"
+    frame_num = 1
+    while frame_num <= num_frames
+      players.each_with_index {|player, i|
+        output.print "\n\n#{player.name} now starting frame #{frame_num}"
+
+        while !player.turn_complete?(frame_num)
+          output.print "\n Roll? >"
+          roll   = listen("0").to_i
+          player = update_player(i, player, roll)
+        end
+
+
+      }
+
+      frame_num += 1
+    end
   end
 
   def initialize_players
@@ -32,16 +48,39 @@ class Game
   def listen(default)
     ((i = input.gets.chomp).empty? ? default : i)
   end
+
+  def determine_num_frames
+    players.first.num_frames_in_game
+  end
+
+  def update_player(i, old_player, roll)
+    new_player = old_player.new_roll(roll)
+    players[i] = new_player
+    new_player
+  end
 end
 
 
 class Player
-  attr_reader :name, :rolls, :config
+  attr_reader :name, :rolls, :config, :frames
 
   def initialize(name:, config:, rolls:[])
     @name   = name
     @config = config
     @rolls  = rolls
+    @frames = Frames.for(rolls: rolls, config: config)
+  end
+
+  def new_roll(roll)
+    Player.new(name: name, config: config, rolls: rolls << roll)
+  end
+
+  def num_frames_in_game
+    frames.size
+  end
+
+  def turn_complete?(frame_number)
+    frames.turn_complete?(frame_number)
   end
 end
 
@@ -68,6 +107,14 @@ class Frames
   def running_scores
     list.reduce([]) {|running_scores, frame|
       running_scores << frame.running_score(running_scores.last)}
+  end
+
+  def turn_complete?(i)
+    frame(i).turn_complete?
+  end
+
+  def frame(i)
+    list[i-1]
   end
 
   def each
@@ -99,6 +146,14 @@ class Frame
 
   def turn_complete?
     turn_rule.turn_complete?(self)
+  end
+
+  def normal_rolls_complete?
+    true
+  end
+
+  def bonus_rolls_complete?
+    true
   end
 end
 
@@ -246,7 +301,7 @@ class Variant
       frame_class =
         if remaining_rolls.size >=  num_rolls_to_score
           Frame
-        elsif remaining_rolls.size >=  num_triggering_rolls
+        elsif remaining_rolls.size < num_triggering_rolls
           MissingNormalRollsFrame
         else
           MissingBonusRollsFrame
