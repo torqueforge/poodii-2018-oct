@@ -1,15 +1,23 @@
 class Frames
+  include Enumerable
+
   def self.for(rolls:, config: Variant::CONFIGS[:TENPIN])
-    new(Variant.new(config: config).framify(rolls))
+    variant = Variant.new(config: config)
+    new(variant.framify(rolls), variant.config)
   end
 
-  attr_reader :list
-  def initialize(list)
+  attr_reader :list, :max_rolls_per_turn
+  def initialize(list, config)
     @list  = list
+    @max_rolls_per_turn = config.max_rolls_per_turn
   end
 
   def score
     list.reduce(0) {|sum, frame| sum += frame.score}
+  end
+
+  def each
+    list.each {|frame| yield frame}
   end
 end
 
@@ -36,8 +44,16 @@ class DetailedScoresheet
   end
 
   def pinfall_line
-    "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |   .    |   .    |   .    |   .    |\n"
+    ("PINS:  |" +
+      frames.map {|frame|
+        " " +
+          ([frame.normal_rolls].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
+            first(frames.max_rolls_per_turn).join(". ") +
+        " "
+      }.join("|") +
+       "|")
   end
+
 end
 
 
@@ -47,12 +63,14 @@ class Variant
   CONFIGS = {
     :TENPIN => {
       :parser => "StandardRollParser",
+      :max_rolls_per_turn => 2,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
       },
     :NOTAP => {
+      :max_rolls_per_turn => 2,
       :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
@@ -60,6 +78,7 @@ class Variant
         {num_triggering_rolls: 2, triggering_value: 0, num_rolls_to_score: 2} ]
       },
     :DUCKPIN => {
+      :max_rolls_per_turn => 3,
       :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
@@ -67,6 +86,7 @@ class Variant
         {num_triggering_rolls: 3, triggering_value:  0, num_rolls_to_score: 3} ]
       },
     :LOWBALL => {
+      :max_rolls_per_turn => 2,
       :parser => "LowballRollParser",
       :scoring_rules => [ # The current structure won't work for LOWBALL
          ]
