@@ -13,11 +13,20 @@ class Frames
   end
 
   def score
-    list.reduce(0) {|sum, frame| sum += frame.score.to_i}
+    running_scores.compact.last
+  end
+
+  def running_scores
+    list.reduce([]) {|running_scores, frame|
+      running_scores << frame.running_score(running_scores.last)}
   end
 
   def each
     list.each {|frame| yield frame}
+  end
+
+  def size
+    list.size
   end
 end
 
@@ -33,10 +42,18 @@ class Frame
   def score
     (normal_rolls + bonus_rolls).sum
   end
+
+  def running_score(previous)
+    previous.to_i + score
+  end
 end
 
 class PendingFrame < Frame
   def score
+    nil
+  end
+
+  def running_score(previous)
     nil
   end
 end
@@ -47,6 +64,18 @@ class DetailedScoresheet
   def initialize(frames:, io: $stdout)
     @frames = frames
     @out    = io
+  end
+
+  def title_line
+    line =
+      ("FRAME: |" +
+        1.upto(frames.size).map {|frame_num|
+          frame_num.to_s.rjust(3).ljust(frames.max_rolls_per_turn * 3) +
+          "  "
+        }.join("|") +
+         "|")
+
+    line[0..7] + line[8..-1].gsub(" ", "-")
   end
 
   def pinfall_line
@@ -78,6 +107,15 @@ class DetailedScoresheet
           ([frame.score].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
             first(frames.max_rolls_per_turn).join(". ") +
         " "
+      }.join("|") +
+       "|")
+  end
+
+  def total_line
+    ("TOTAL: |" +
+      frames.running_scores.map {|running_score|
+        running_score.to_s.rjust(3).ljust(frames.max_rolls_per_turn * 3) +
+        "   "
       }.join("|") +
        "|")
   end
