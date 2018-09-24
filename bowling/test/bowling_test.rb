@@ -154,7 +154,7 @@ class VariantTest < Minitest::Test
 
   def test_last_frame
     f = Variant.new(config: @config).framify(@input_rolls).last
-    assert_equal 0, f.score
+    assert_nil f.score
   end
 end
 
@@ -214,36 +214,10 @@ end
 
 class FrameTest < Minitest::Test
   def test_sums_rolls_to_calculate_score
-    assert_equal 160, Frame.new(rolls: [10,50,100]).score
+    assert_equal 160, Frame.new(normal_rolls: [10], bonus_rolls: [50,100]).score
   end
 end
 
-
-
-# New Requirement: Print a scoresheet
-#
-# The scoresheet below is not as DRY as the canonical bowling scoresheet
-# that you see displayed at bowling alleys.
-#
-# This 'detailed' scoresheet introduces several difficulties:
-#
-# 1) Frame answers 0 for rolls that have not yet occurred.
-#     The scoresheet wants to print 0 when a gutterball was rolled,
-#     but nothing otherwise.
-#
-# 2) Frame objects don't currently distinguish between normal and bonus rolls
-#     so they can't provide info for the PINS and BONUS lines below.
-#
-#  This scoresheet explicitly prints bonus rolls on the BONUS line
-#    of the frame to which they accrue.  This means that not only do
-#    bonus rolls appear separately from normal rolls, but bonus rolls
-#    appear twice, once in the frame in which they were originally rolled,
-#    and a second time in the frame where they count again towards
-#    the frame's score.
-#
-# Both of these problems can be fixed by making Frame smarter.
-# Making Frame smarter means changing Variant to pass more information
-# to a Frame at creation time.
 
 class DetailedScoresheetTest < Minitest::Test
   def setup
@@ -260,6 +234,36 @@ class DetailedScoresheetTest < Minitest::Test
       "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |   .    |   .    |   .    |   .    |\n" +
       "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     |        |        |        |        |\n" +
       "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     |        |        |        |        |\n"
+
+    DetailedScoresheet.new(frames: frames, io: @io).render
+    assert_equal expected, @io.string
+  end
+
+  def test_scoresheet_for_complete_game
+    rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0] + [7,3] + ([3,4] * 3))
+    frames = Frames.for(rolls: rolls)
+
+    expected =
+      "FRAME: |--1-----|--2-----|--3-----|--4-----|--5-----|--6-----|--7-----|--8-----|--9-----|-10-----|\n" +
+      "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |  7.  3 |  3.  4 |  3.  4 |  3.  4 |\n" +
+      "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |  3.    |   .    |   .    |   .    |\n" +
+      "SCORE: | 30     | 21     | 13     |  3     |  6     |  4     | 13     |  7     |  7     |  7     |\n" +
+      "TOTAL: | 30     | 51     | 64     | 67     | 73     | 77     | 90     | 97     |104     |111     |\n"
+
+    DetailedScoresheet.new(frames: frames, io: @io).render
+    assert_equal expected, @io.string
+  end
+
+  def test_scoresheet_for_complete_game_of_three_roll_frames
+    rolls  = (([10] * 3) + [1,2,3] + [3,3,0] + [4,0,0] + [7,3] + ([3,4,1] * 3))
+    frames = Frames.for(rolls: rolls, config: Variant::CONFIGS[:DUCKPIN])
+
+    expected =
+    "FRAME: |--1---------|--2---------|--3---------|--4---------|--5---------|--6---------|--7---------|--8---------|--9---------|-10---------|\n" +
+    "PINS:  | 10.   .    | 10.   .    | 10.   .    |  1.  2.  3 |  3.  3.  0 |  4.  0.  0 |  7.  3.    |  3.  4.  1 |  3.  4.  1 |  3.  4.  1 |\n" +
+    "BONUS: | 10. 10.    | 10.  1.    |  1.  2.    |   .   .    |   .   .    |   .   .    |  3.   .    |   .   .    |   .   .    |   .   .    |\n" +
+    "SCORE: | 30         | 21         | 13         |  6         |  6         |  4         | 13         |  8         |  8         |  8         |\n" +
+    "TOTAL: | 30         | 51         | 64         | 70         | 76         | 80         | 93         |101         |109         |117         |\n"
 
     DetailedScoresheet.new(frames: frames, io: @io).render
     assert_equal expected, @io.string
