@@ -70,6 +70,17 @@ class DetailedScoresheet
       }.join("|") +
        "|")
   end
+
+  def score_line
+    ("SCORE: |" +
+      frames.map {|frame|
+        " " +
+          ([frame.score].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
+            first(frames.max_rolls_per_turn).join(". ") +
+        " "
+      }.join("|") +
+       "|")
+  end
 end
 
 

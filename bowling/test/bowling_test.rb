@@ -249,6 +249,16 @@ class DetailedScoresheetTest < Minitest::Test
     assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).bonus_line
   end
 
+  def test_incomplete_game_score_line
+    expected = "SCORE: | 30.    | 21.    | 13.    |  3.    |  6.    |  4.    |   .    |   .    |   .    |   .    |"
+    assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).score_line
+  end
+
+  def test_complete_game_score_line
+    expected = "SCORE: | 30.    | 21.    | 13.    |  3.    |  6.    |  4.    | 13.    |  7.    |  7.    |  7.    |"
+    assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).score_line
+  end
+
   # def test_scoresheet_for_incomplete_game
   #   rolls  = (([10] * 3) + [1,2] + [3,3] + [4,0])
   #   frames = Frames.for(rolls: rolls)
