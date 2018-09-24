@@ -1,44 +1,130 @@
+#####################################################################
 class Frames
+  include Enumerable
+
   def self.for(rolls:, config: Variant::CONFIGS[:TENPIN])
-    new(Variant.new(config: config).framify(rolls))
+    variant = Variant.new(config: config)
+    new(variant.framify(rolls), variant.config)
   end
 
-  attr_reader :list
-  def initialize(list)
+  attr_reader :list, :max_rolls_per_turn
+  def initialize(list, config)
     @list  = list
+    @max_rolls_per_turn = config.max_rolls_per_turn
   end
 
   def score
-    list.reduce(0) {|sum, frame| sum += frame.score}
+    running_scores.compact.last
+  end
+
+  def running_scores
+    list.reduce([]) {|running_scores, frame|
+      running_scores << frame.running_score(running_scores.last)}
+  end
+
+  def each
+    list.each {|frame| yield frame}
+  end
+
+  def size
+    list.size
   end
 end
 
 
+#####################################################################
 class Frame
-  attr_reader :rolls
-  def initialize(rolls:)
-    @rolls = rolls
+  attr_reader :normal_rolls, :bonus_rolls
+  def initialize(normal_rolls: nil, bonus_rolls: nil)
+    @normal_rolls = normal_rolls
+    @bonus_rolls  = bonus_rolls
   end
 
   def score
-    rolls.sum
+    (normal_rolls + bonus_rolls).sum
+  end
+
+  def running_score(previous)
+    previous.to_i + score
+  end
+end
+
+class PendingFrame < Frame
+  def score
+    nil
+  end
+
+  def running_score(previous)
+    nil
   end
 end
 
 
+#####################################################################
+class DetailedScoresheet
+  attr_reader :frames, :out
+  def initialize(frames:, io: $stdout)
+    @frames = frames
+    @out    = io
+  end
 
+  def render
+    out.puts dasherized(frame_summary_line("FRAME", 1.upto(frames.size)))
+    out.puts frame_detail_line("PINS",  :normal_rolls)
+    out.puts frame_detail_line("BONUS", :bonus_rolls)
+    out.puts frame_detail_line("SCORE", :score, "  ")
+    out.puts frame_summary_line("TOTAL", frames.running_scores)
+  end
+
+  private
+
+  def frame_summary_line(title, items)
+    enclosed(title) {
+      items.map {|item|
+        item.to_s.rjust(3).ljust((frames.max_rolls_per_turn-1) * 4) + "    "
+      }
+    }
+  end
+
+  def frame_detail_line(title, message, sep=". ")
+    enclosed(title) {
+      frames.map {|frame|
+        " " + format_details(frame.send(message), frames.max_rolls_per_turn).join(sep) + " "
+      }
+    }
+  end
+
+  def enclosed(title)
+    "#{(title + ':').ljust(6)} |" + (yield).join("|") + "|"
+  end
+
+  def format_details(list, minimum_num_items)
+    ([list].flatten.compact.map {|item|
+      sprintf("%2d", item) } + Array.new(minimum_num_items, '  ')).
+        first(minimum_num_items)
+  end
+
+  def dasherized(line)
+    line[0..7] + line[8..-1].gsub(" ", "-")
+  end
+end
+
+
+#####################################################################
 require 'ostruct'
 
 class Variant
   CONFIGS = {
     :TENPIN => {
       :parser => "StandardRollParser",
+      :max_rolls_per_turn => 2,
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
       },
     :NOTAP => {
+      :max_rolls_per_turn => 2,
       :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
@@ -46,6 +132,7 @@ class Variant
         {num_triggering_rolls: 2, triggering_value: 0, num_rolls_to_score: 2} ]
       },
     :DUCKPIN => {
+      :max_rolls_per_turn => 3,
       :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
@@ -53,6 +140,7 @@ class Variant
         {num_triggering_rolls: 3, triggering_value:  0, num_rolls_to_score: 3} ]
       },
     :LOWBALL => {
+      :max_rolls_per_turn => 2,
       :parser => "LowballRollParser",
       :scoring_rules => [ # The current structure won't work for LOWBALL
          ]
@@ -75,15 +163,18 @@ class Variant
       current_frame += 1
       num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
 
-      roll_scores =
+      frame_class =
         if remaining_rolls.size >=  num_rolls_to_score
-          roll_scores
+          Frame
         else
-          [0]
+          PendingFrame
         end
 
+      normal = roll_scores.take(num_triggering_rolls)
+      bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
+
       remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << Frame.new(rolls: roll_scores)
+      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus)
     end
 
     frame_list
