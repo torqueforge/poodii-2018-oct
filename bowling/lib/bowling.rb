@@ -71,8 +71,6 @@ class Player
     @frames = Frames.for(rolls: rolls, config: config)
   end
 
-  # Players are immutable.  Updating a players list of
-  # rolls gets you a new player will a new rolls history.
   def new_roll(roll)
     Player.new(name: name, config: config, rolls: rolls << roll)
   end
