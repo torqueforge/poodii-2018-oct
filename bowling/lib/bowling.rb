@@ -59,6 +59,17 @@ class DetailedScoresheet
       }.join("|") +
        "|")
   end
+
+  def bonus_line
+    ("BONUS: |" +
+      frames.map {|frame|
+        " " +
+          ([frame.bonus_rolls].flatten.compact.map {|item| sprintf("%2d", item) } + Array.new(frames.max_rolls_per_turn, '  ')).
+            first(frames.max_rolls_per_turn).join(". ") +
+        " "
+      }.join("|") +
+       "|")
+  end
 end
 
 

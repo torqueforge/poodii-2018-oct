@@ -224,7 +224,7 @@ class DetailedScoresheetTest < Minitest::Test
     incomplete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0])
     @incomplete_frames = Frames.for(rolls: incomplete_rolls)
 
-    complete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0] + ([3,4] * 4))
+    complete_rolls   = (([10] * 3) + [1,2] + [3,3] + [4,0] + [7,3] + ([3,4] * 3))
     @complete_frames = Frames.for(rolls: complete_rolls)
     @io = StringIO.new
   end
@@ -235,8 +235,18 @@ class DetailedScoresheetTest < Minitest::Test
   end
 
   def test_complete_game_pinfall_line
-    expected = "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |  3.  4 |  3.  4 |  3.  4 |  3.  4 |"
+    expected = "PINS:  | 10.    | 10.    | 10.    |  1.  2 |  3.  3 |  4.  0 |  7.  3 |  3.  4 |  3.  4 |  3.  4 |"
     assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).pinfall_line
+  end
+
+  def test_incomplete_game_bonus_line
+    expected = "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |   .    |   .    |   .    |   .    |"
+    assert_equal expected, DetailedScoresheet.new(frames: @incomplete_frames, io: @io).bonus_line
+  end
+
+  def test_complete_game_bonus_line
+    expected = "BONUS: | 10. 10 | 10.  1 |  1.  2 |   .    |   .    |   .    |  3.    |   .    |   .    |   .    |"
+    assert_equal expected, DetailedScoresheet.new(frames: @complete_frames, io: @io).bonus_line
   end
 
   # def test_scoresheet_for_incomplete_game
