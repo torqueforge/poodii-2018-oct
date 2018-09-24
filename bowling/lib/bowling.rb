@@ -96,6 +96,34 @@ class PendingFrame < Frame
   end
 end
 
+# I'm already uncomfortable about using inheritance
+# in the PendingFrame class above, and replacing PendingFrame
+# with the two new classes below exacerbates my fears.
+# Regardless, let's proceed and see what happens.
+class MissingNormalRollsFrame < Frame
+  def score
+    nil
+  end
+
+  def running_score(previous)
+    nil
+  end
+
+  def normal_rolls_complete?
+    false
+  end
+
+  def bonus_rolls_complete?
+    false
+  end
+end
+
+class MissingBonusRollsFrame < MissingNormalRollsFrame
+  def normal_rolls_complete?
+    true
+  end
+end
+
 
 #####################################################################
 class DetailedScoresheet
