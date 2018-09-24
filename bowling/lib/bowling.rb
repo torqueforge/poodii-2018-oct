@@ -46,6 +46,45 @@ class Game
   #        a number of objects.
   #      How many of these objects does Game get to know about?
 
+
+  # Design Decisions:  (YMMV)
+  #
+  # 1) Create Player object
+  #      Players knows its game variant
+  #      Player responds to
+  #        #frames
+  #        #turn_complete? (delegates to Frames)
+  #        #num_frames_in_game
+  #        #new_roll(roll)
+  #
+  # 2) Frames/Frame are to remain immutable.  Player
+  #      holds onto roll history and creates a new Frames
+  #      when new rolls arrive.
+  #
+  # 3) Frames implements
+  #      #turn_complete? (delegates to current frame)
+  #
+  # 4) Frame implements
+  #      #turn_complete? (delegates to turn_rule)
+  #
+  # 5) Create two 'turn_rule' objects,
+  #      GeneralTurnRule, for use with all but the final frame
+  #      FinalFrameTurnRule, for the final frame.
+  #
+  # 6) Break PendingFrame into MissingNormalRollsFrame and MissingBonusRollsFrame
+  #      Right now PendingFrame is used to indicate that the frame
+  #      can't yet be scored, either because
+  #      the normal rolls aren't complete, or because
+  #      the player earned bonus rolls, and those bonus rolls aren't compelete.
+  #
+  #      The turn_rules need to be able to distinguish between these
+  #      two 'missing' rolls situations, so PendingFrame needs to
+  #      be replaced with these more specific frame objects.
+  #
+  # 7) Variant#framify needs to create
+  #     the corret Frame object, with
+  #     the correct turn rule.
+
   def play
     output.print "\n\nFee now starting frame 1"
   end
