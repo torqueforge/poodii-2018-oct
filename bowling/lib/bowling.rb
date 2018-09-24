@@ -6,6 +6,10 @@ class Game
     initialize_players
   end
 
+  def play
+    output.print "\n\nFee now starting frame 1"
+  end
+
   def initialize_players
     [].tap {|players|
       get_player_names.each {|name|

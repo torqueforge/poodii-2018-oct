@@ -326,4 +326,12 @@ class GameTest < Minitest::Test
     start_game
     assert_equal "DUCKPIN", @game.get_player_game_type("fake name to test type prompt")
   end
+
+  def test_prompts_players_for_rolls
+    @input.string = @mock_answers
+    expected = @expected_prompts + "\n\nFee now starting frame 1"
+    start_game
+    @game.play
+    assert starts_with?(expected, @output), "Expected\n  #{@output.string.inspect}\nto start with\n  #{expected.inspect}"
+  end
 end
