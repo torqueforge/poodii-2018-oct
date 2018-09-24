@@ -241,11 +241,18 @@ class Variant
           MissingBonusRollsFrame
         end
 
+      turn_rule =
+        if current_frame == max_frames
+          FinalFrameTurnRule
+        else
+          GeneralTurnRule
+        end.new
+
       normal = roll_scores.take(num_triggering_rolls)
       bonus  = roll_scores[num_triggering_rolls...num_rolls_to_score] || []
 
       remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
-      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus)
+      frame_list << frame_class.new(normal_rolls: normal, bonus_rolls: bonus, turn_rule: turn_rule)
     end
 
     frame_list
