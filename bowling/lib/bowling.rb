@@ -23,9 +23,8 @@ end
 
 
 class Frame
-  attr_reader :rolls, :normal_rolls, :bonus_rolls
-  def initialize(rolls:, normal_rolls: nil, bonus_rolls: nil)
-    @rolls = rolls
+  attr_reader :normal_rolls, :bonus_rolls
+  def initialize(rolls: nil, normal_rolls: nil, bonus_rolls: nil)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
   end
@@ -53,7 +52,6 @@ class DetailedScoresheet
       }.join("|") +
        "|")
   end
-
 end
 
 
