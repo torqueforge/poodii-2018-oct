@@ -270,3 +270,13 @@ class DetailedScoresheetTest < Minitest::Test
   end
 end
 
+class GameTest < Minitest::Test
+  def test_prompts_for_player_names
+    input  = StringIO.new("\n\n")
+    output = StringIO.new
+    player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
+
+    Game.new(input: input, output: output)
+    assert_equal player_name_prompt, output.string
+  end
+end

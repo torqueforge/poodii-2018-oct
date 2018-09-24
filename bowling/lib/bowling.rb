@@ -1,9 +1,11 @@
-# New Requirement: Interactive Game
-#
-# Let's play!  Create a console-based interactive multi-user bowling game.
-# Prompt for users and game types, and then alternate between players,
-# prompting for rolls.  After each turn, display a scoresheet.  When
-# the game ends, display a summary.
+class Game
+  attr_reader :input, :output
+  def initialize(input: $stdin, output: $stdout)
+    @input  = input
+    @output = output
+    output.print "\nWho's playing? (Larry, Curly, Moe) >"
+  end
+end
 
 
 #####################################################################
