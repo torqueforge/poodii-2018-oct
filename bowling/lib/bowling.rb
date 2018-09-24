@@ -74,6 +74,8 @@ class DetailedScoresheet
     out.puts total_line
   end
 
+  private
+
   def title_line
     line =
       ("FRAME: |" +
