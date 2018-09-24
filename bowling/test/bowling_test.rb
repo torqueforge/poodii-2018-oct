@@ -274,6 +274,7 @@ class GameTest < Minitest::Test
   def setup
     @input  = StringIO.new("\n\n\n\n\n")
     @output = StringIO.new
+    @scoresheet_output = StringIO.new
 
     @player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
     @game_type_prompt   = "\nWhich game would %s like to play? (TENPIN) >"
@@ -296,11 +297,11 @@ class GameTest < Minitest::Test
   end
 
   def start_game
-   @game = Game.new(input: @input, output: @output)
+   @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output)
   end
 
   def assert_starts_with(expected, output)
-    assert starts_with?(expected, output), "Expected ->\n  #{@output.string[0..(expected.size+20)]}\n---------\nTo start with ->\n  #{expected}"
+    assert starts_with?(expected, output), "Expected ->\n  #{output.string[0..(expected.size+20)]}\n---------\nTo start with ->\n  #{expected}"
   end
 
   def test_prompts_for_player_names
@@ -354,5 +355,13 @@ class GameTest < Minitest::Test
     start_game
     @game.play
     assert_starts_with(expected, @output)
+  end
+
+  def test_prints_scoresheet_after_turn
+    @input.string = @mock_answers_with_pinfalls
+    expected = "FRAME: |--1-----|-"
+    start_game
+    @game.play
+    assert_starts_with(expected, @scoresheet_output)
   end
 end
