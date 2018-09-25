@@ -160,10 +160,11 @@ class Frame
   subclasses_must_implement(
     [:score, :running_score, :normal_rolls_complete?, :bonus_rolls_complete?])
 
-  attr_reader :normal_rolls, :bonus_rolls, :turn_rule
-  def initialize(normal_rolls:, bonus_rolls:, turn_rule: GeneralTurnRule.new)
+  attr_reader :normal_rolls, :bonus_rolls, :status, :turn_rule
+  def initialize(normal_rolls:, bonus_rolls:, status: nil, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
+    @status       = status
     @turn_rule    = turn_rule
   end
 
