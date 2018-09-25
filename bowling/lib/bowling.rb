@@ -1,3 +1,13 @@
+module EnforceSubclassResponsibility
+  refine Module do
+    def subclasses_must_implement(meths)
+      meths.each {|meth|
+        define_method(meth) {raise NoMethodError.new("#{self.class} must implement #{meth}")}
+      }
+    end
+  end
+end
+
 #####################################################################
 class Game
   attr_reader :input, :output, :scoresheet_output,
@@ -145,6 +155,11 @@ end
 
 #####################################################################
 class Frame
+  using EnforceSubclassResponsibility
+
+  subclasses_must_implement(
+    [:score, :running_score, :normal_rolls_complete?, :bonus_rolls_complete?])
+
   attr_reader :normal_rolls, :bonus_rolls, :turn_rule
   def initialize(normal_rolls:, bonus_rolls:, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
