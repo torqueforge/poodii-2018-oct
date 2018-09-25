@@ -144,7 +144,11 @@ end
 
 
 #####################################################################
+require 'forwardable'
 class Frame
+  extend Forwardable
+  def_delegators :status, :normal_rolls_complete?, :bonus_rolls_complete?
+
   attr_reader :normal_rolls, :bonus_rolls, :status, :turn_rule
   def initialize(normal_rolls:, bonus_rolls:, status: nil, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
@@ -163,14 +167,6 @@ class Frame
 
   def running_score(previous)
     status.running_score(previous, self)
-  end
-
-  def normal_rolls_complete?
-    status.normal_rolls_complete?
-  end
-
-  def bonus_rolls_complete?
-    status.bonus_rolls_complete?
   end
 end
 
