@@ -410,7 +410,6 @@ class Variant
     normal_rolls = roll_scores.take(num_triggering_rolls)
     bonus_rolls  = (roll_scores[num_triggering_rolls...num_rolls_to_score] || [])
     status       = status(num_triggering_rolls, num_rolls_to_score, roll_scores)
-    frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
     turn_rule    = turn_rule(frame_num)
 
     Frame.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls,
@@ -429,16 +428,6 @@ class Variant
     else
       FrameStatus::MissingBonusRolls
     end.new
-  end
-
-  def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
-    if rolls.size >=  num_rolls_to_score
-      CompleteFrame
-    elsif rolls.size < num_triggering_rolls
-      MissingNormalRollsFrame
-    else
-      MissingBonusRollsFrame
-    end
   end
 
   def turn_rule(current_frame_num)
