@@ -413,7 +413,7 @@ class Variant
     frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
     turn_rule    = turn_rule(frame_num)
 
-    frame_class.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls,
+    Frame.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls,
                     status: status, turn_rule: turn_rule)
   end
 
