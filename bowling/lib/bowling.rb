@@ -144,58 +144,76 @@ end
 
 
 #####################################################################
+require 'forwardable'
 class Frame
-  attr_reader :normal_rolls, :bonus_rolls, :turn_rule
-  def initialize(normal_rolls:, bonus_rolls:, turn_rule: GeneralTurnRule.new)
+  extend Forwardable
+  def_delegators :status, :normal_rolls_complete?, :bonus_rolls_complete?
+
+  attr_reader :normal_rolls, :bonus_rolls, :status, :turn_rule
+  def initialize(normal_rolls:, bonus_rolls:, status: nil, turn_rule: GeneralTurnRule.new)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
+    @status       = status
     @turn_rule    = turn_rule
-  end
-
-  def score
-    (normal_rolls + bonus_rolls).sum
-  end
-
-  def running_score(previous)
-    previous.to_i + score
   end
 
   def turn_complete?
     turn_rule.turn_complete?(self)
   end
 
-  def normal_rolls_complete?
-    true
-  end
-
-  def bonus_rolls_complete?
-    true
-  end
-end
-
-class MissingNormalRollsFrame < Frame
   def score
-    nil
+    status.score(self)
   end
 
   def running_score(previous)
-    nil
-  end
-
-  def normal_rolls_complete?
-    false
-  end
-
-  def bonus_rolls_complete?
-    false
+    status.running_score(previous, self)
   end
 end
 
-class MissingBonusRollsFrame < MissingNormalRollsFrame
-  def normal_rolls_complete?
-    true
+module FrameStatus
+  class Complete
+    def score(frame)
+      (frame.normal_rolls + frame.bonus_rolls).sum
+    end
+
+    def running_score(previous, frame)
+      previous.to_i + frame.score
+    end
+
+    def normal_rolls_complete?
+      true
+    end
+
+    def bonus_rolls_complete?
+      true
+    end
+  end
+
+  class MissingNormalRolls
+    def score(frame)
+      nil
+    end
+
+    def running_score(previous, frame)
+      nil
+    end
+
+    def normal_rolls_complete?
+      false
+    end
+
+    def bonus_rolls_complete?
+      false
+    end
+  end
+
+  class MissingBonusRolls < MissingNormalRolls
+    def normal_rolls_complete?
+      true
+    end
   end
 end
+
 
 #####################################################################
 class GeneralTurnRule
@@ -330,24 +348,25 @@ class Variant
 
     normal_rolls = roll_scores.take(num_triggering_rolls)
     bonus_rolls  = (roll_scores[num_triggering_rolls...num_rolls_to_score] || [])
-    frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
+    status       = status(num_triggering_rolls, num_rolls_to_score, roll_scores)
     turn_rule    = turn_rule(frame_num)
 
-    frame_class.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls, turn_rule: turn_rule)
+    Frame.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls,
+                    status: status, turn_rule: turn_rule)
   end
 
   def parse(rolls)
     parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
   end
 
-  def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
+  def status(num_triggering_rolls, num_rolls_to_score, rolls)
     if rolls.size >=  num_rolls_to_score
-      Frame
+      FrameStatus::Complete
     elsif rolls.size < num_triggering_rolls
-      MissingNormalRollsFrame
+      FrameStatus::MissingNormalRolls
     else
-      MissingBonusRollsFrame
-    end
+      FrameStatus::MissingBonusRolls
+    end.new
   end
 
   def turn_rule(current_frame_num)
