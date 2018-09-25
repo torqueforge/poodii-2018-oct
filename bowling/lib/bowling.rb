@@ -171,6 +171,22 @@ class Frame
   def turn_complete?
     turn_rule.turn_complete?(self)
   end
+
+  def score
+    status.score(self)
+  end
+
+  def running_score(previous)
+    status.running_score(previous, self)
+  end
+
+  def normal_rolls_complete?
+    status.normal_rolls_complete?
+  end
+
+  def bonus_rolls_complete?
+    status.bonus_rolls_complete?
+  end
 end
 
 class CompleteFrame < Frame
