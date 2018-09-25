@@ -419,6 +419,16 @@ class Variant
     parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
   end
 
+  def status(num_triggering_rolls, num_rolls_to_score, rolls)
+    if rolls.size >=  num_rolls_to_score
+      FrameStatus::Complete
+    elsif rolls.size < num_triggering_rolls
+      FrameStatus::MissingNormalRolls
+    else
+      FrameStatus::MissingBonusRolls
+    end.new
+  end
+
   def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
     if rolls.size >=  num_rolls_to_score
       CompleteFrame
