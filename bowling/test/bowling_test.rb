@@ -211,10 +211,34 @@ class FramesTest < Minitest::Test
   end
 end
 
-# This test no longer makes sense.  What should replace it?
+
+# Do you think the following FrameAPI test and FrameTest test are worthwhile?
+# Would you test CompleteFrame, MissingNormalRollsFrame, MissingBonusRollsFrame?
+
+######################################
+# FrameAPI Test:
+#   To be included within the unit test of
+#   any object who wants to play the
+#   'frame' role.
+#######################################
+module FrameAPITest
+  def test_initialization_takes_correct_keyword_args
+    @api_test_target.new(normal_rolls: nil, bonus_rolls: nil)
+  end
+
+  def test_implements_api
+    f = @api_test_target.new(normal_rolls: nil, bonus_rolls: nil)
+    [:score, :running_score, :normal_rolls_complete?, :bonus_rolls_complete?].each {|meth|
+      assert_respond_to f, meth
+    }
+  end
+end
+
 class FrameTest < Minitest::Test
-  def test_sums_rolls_to_calculate_score
-    # assert_equal 160, Frame.new(normal_rolls: [10], bonus_rolls: [50,100]).score
+  include FrameAPITest
+
+  def setup
+    @api_test_target = Frame
   end
 end
 
