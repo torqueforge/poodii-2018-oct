@@ -249,8 +249,6 @@ module FrameStatusAPITest
 end
 
 
-# A bridge too far?  Discuss!
-
 ######################################
 # Dynamically generate FrameStatus API tests for
 # players of the Frame Status role
