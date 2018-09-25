@@ -212,11 +212,59 @@ class FramesTest < Minitest::Test
 end
 
 
-class FrameTest < Minitest::Test
-  def test_sums_rolls_to_calculate_score
-    assert_equal 160, Frame.new(normal_rolls: [10], bonus_rolls: [50,100]).score
+######################################
+# FrameAPI Test:
+#   To be included within the unit test of
+#   any object who wants to play the
+#   'frame' role.
+#######################################
+module FrameAPITest
+  def test_initialization_takes_correct_keyword_args
+    @api_test_target.new(normal_rolls: nil, bonus_rolls: nil, status: nil)
   end
 end
+
+class FrameTest < Minitest::Test
+  include FrameAPITest
+
+  def setup
+    @api_test_target = Frame
+  end
+end
+
+
+######################################
+# FrameStatusAPI Test:
+#   To be included within the unit test of
+#   any object who wants to play the
+#   'frame status' role.
+#######################################
+module FrameStatusAPITest
+  def test_implements_api
+    f = @api_test_target.new
+    [:score, :running_score, :normal_rolls_complete?, :bonus_rolls_complete?].each {|meth|
+      assert_respond_to f, meth
+    }
+  end
+end
+
+
+######################################
+# Dynamically generate FrameStatus API tests for
+# players of the Frame Status role
+######################################
+[ FrameStatus::Complete,
+  FrameStatus::MissingNormalRolls,
+  FrameStatus::MissingBonusRolls].each {|status_class|
+
+  Class.new(Minitest::Test) do
+    include FrameStatusAPITest
+
+    define_method :setup do
+      @api_test_target = status_class
+    end
+  end
+}
 
 
 class DetailedScoresheetTest < Minitest::Test
