@@ -409,6 +409,7 @@ class Variant
 
     normal_rolls = roll_scores.take(num_triggering_rolls)
     bonus_rolls  = (roll_scores[num_triggering_rolls...num_rolls_to_score] || [])
+    status       = status(num_triggering_rolls, num_rolls_to_score, roll_scores)
     frame_class  = frame_class(num_triggering_rolls, num_rolls_to_score, roll_scores)
     turn_rule    = turn_rule(frame_num)
 
