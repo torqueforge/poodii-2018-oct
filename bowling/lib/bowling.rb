@@ -214,22 +214,50 @@ class MissingBonusRollsFrame < MissingNormalRollsFrame
   end
 end
 
-# Now that the Frame hierarchy above is better organized, the subclasses
-# are so alike they could almost stand alone.
-#
-# Instead of being subclassed, could Frame instead be 'composed'
-# of FrameStati like the following?
-
 module FrameStatus
   class Complete
+    def score(frame)
+      (frame.normal_rolls + frame.bonus_rolls).sum
+    end
+
+    def running_score(previous, frame)
+      previous.to_i + frame.score
+    end
+
+    def normal_rolls_complete?
+      true
+    end
+
+    def bonus_rolls_complete?
+      true
+    end
   end
 
   class MissingNormalRolls
+    def score(frame)
+      nil
+    end
+
+    def running_score(previous, frame)
+      nil
+    end
+
+    def normal_rolls_complete?
+      false
+    end
+
+    def bonus_rolls_complete?
+      false
+    end
   end
 
-  class MissingBonusRolls
+  class MissingBonusRolls < MissingNormalRolls
+    def normal_rolls_complete?
+      true
+    end
   end
 end
+
 
 #####################################################################
 class GeneralTurnRule
