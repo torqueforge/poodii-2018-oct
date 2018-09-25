@@ -189,48 +189,6 @@ class Frame
   end
 end
 
-class CompleteFrame < Frame
-  def score
-    (normal_rolls + bonus_rolls).sum
-  end
-
-  def running_score(previous)
-    previous.to_i + score
-  end
-
-  def normal_rolls_complete?
-    true
-  end
-
-  def bonus_rolls_complete?
-    true
-  end
-end
-
-class MissingNormalRollsFrame < Frame
-  def score
-    nil
-  end
-
-  def running_score(previous)
-    nil
-  end
-
-  def normal_rolls_complete?
-    false
-  end
-
-  def bonus_rolls_complete?
-    false
-  end
-end
-
-class MissingBonusRollsFrame < MissingNormalRollsFrame
-  def normal_rolls_complete?
-    true
-  end
-end
-
 module FrameStatus
   class Complete
     def score(frame)
