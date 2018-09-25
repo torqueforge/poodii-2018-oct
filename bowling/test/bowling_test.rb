@@ -248,27 +248,25 @@ module FrameStatusAPITest
   end
 end
 
-class FrameStatusCompleteTest < Minitest::Test
-  include FrameStatusAPITest
-  def setup
-    @api_test_target = FrameStatus::Complete
-  end
-end
 
-class FrameStatusMissingNormalRollsTest < Minitest::Test
-  include FrameStatusAPITest
-  def setup
-    @api_test_target = FrameStatus::MissingNormalRolls
-  end
-end
+# A bridge too far?  Discuss!
 
-class FrameStatusMissingNormalRollsTest < Minitest::Test
-  include FrameStatusAPITest
-  def setup
-    @api_test_target = FrameStatus::MissingBonusRolls
-  end
-end
+######################################
+# Dynamically generate FrameStatus API tests for
+# players of the Frame Status role
+######################################
+[ FrameStatus::Complete,
+  FrameStatus::MissingNormalRolls,
+  FrameStatus::MissingBonusRolls].each {|status_class|
 
+  Class.new(Minitest::Test) do
+    include FrameStatusAPITest
+
+    define_method :setup do
+      @api_test_target = status_class
+    end
+  end
+}
 
 
 class DetailedScoresheetTest < Minitest::Test
