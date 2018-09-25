@@ -152,16 +152,18 @@ class Frame
     @turn_rule    = turn_rule
   end
 
+  def turn_complete?
+    turn_rule.turn_complete?(self)
+  end
+end
+
+class CompleteFrame < Frame
   def score
     (normal_rolls + bonus_rolls).sum
   end
 
   def running_score(previous)
     previous.to_i + score
-  end
-
-  def turn_complete?
-    turn_rule.turn_complete?(self)
   end
 
   def normal_rolls_complete?
@@ -342,7 +344,7 @@ class Variant
 
   def frame_class(num_triggering_rolls, num_rolls_to_score, rolls)
     if rolls.size >=  num_rolls_to_score
-      Frame
+      CompleteFrame
     elsif rolls.size < num_triggering_rolls
       MissingNormalRollsFrame
     else
