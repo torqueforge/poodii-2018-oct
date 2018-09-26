@@ -21,9 +21,9 @@
 
 #####################################################################
 # Ponderings:
-#   The existing code is very much not open to DUCKPIN.
-#     1) The structure of the config won't support DUCKPIN rules
-#     2) DUCKPIN allow a roll's score to differ from its pinfall
+#   The existing code is very much not open to LOWBALL.
+#     1) The structure of the config won't support LOWBALL rules
+#     2) LOWBALL allow a roll's score to differ from its pinfall
 #
 # The fundamental design rule is to isolate the things you need to vary,
 # so the first task here is to understand what, exactly, needs to change.
@@ -55,7 +55,7 @@
 # As always, we need to isolate the thing we want to vary.  However,
 # it's not super clear what that thing is, i.e., what the exact
 # code difference should be between the code we have and
-# code that would also support DUCKPIN.  Because of this, it's time
+# code that would also support LOWBALL.  Because of this, it's time
 # to remove possibly related code smells, hoping to increase isolation.
 #
 # Goals:
