@@ -32,9 +32,12 @@ class Bowling
       end
 
       # open frame
-      if remaining_rolls.size > 1
-        running_score  += remaining_rolls.take(2).sum
+      if (remaining_rolls.take(2).sum) >= 0
+        if remaining_rolls.size >= 2
+        running_score += remaining_rolls.take(2).sum
         remaining_rolls = remaining_rolls.drop(2)
+        end
+        next
       end
     end
 
