@@ -14,3 +14,6 @@ Game/Scoresheet collaboration
     from DetailedScoresheet  
 
 1. Consider which is better, the test double or the mock?
+
+
+See bowling_8_classic_scoresheet_refactor for a detailed example.
