@@ -46,5 +46,5 @@ How much testing does Frame need?
 
 #### Critique an existing test suite
 
-Branch bowling_l5_unittests_example contains a set of tests written in response to the above questions.  (As always, the step-by-step changes are in bowling_l5..._refactor).   
+Branch bowling_5_unit_tests_refactor contains a set of tests written in response to the above questions.  (As always, that branch also contains the step-by-step commits).   
     What would you change about these tests?
