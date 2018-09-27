@@ -4,6 +4,7 @@
 ### Goals:
 
 * Become familiar with the Bowling Problem
+* Practice TDD
 * Remind yourself of Shameless Green
 
 
