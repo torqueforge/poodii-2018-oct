@@ -1,15 +1,23 @@
 ## Handle turn prompting within interactive game
 
-The play method of Game currently returns the following hard-coded output:
+This task begins in the middle of an ongoing refactoring to add interactive, multi-person game play.
+
+The refactoring has already begun--there are a number of tests (in the GameTest class of test/bowling_test.rb) and
+a new Game class (in lib/bowling.rb).
+
+Currently, the Game class has a play method that returns the following hard-coded output:
 
     def play
       output.print "\n\nFee now starting frame 1" 
     end
 
-The #test_prompts_for_rolls_until_turn_is_complete test has just been written.
-Your job is to make it pass.
+A new test to prompt the current player to roll until their turn is complete (test_prompts_for_rolls_until_turn_is_complete) has just been written.  This test is failing. 
 
-You need to add a loop like the following to #play:
+Your first job is to *design* a code arrangement that would pass this test.
+
+### Design considerations
+
+The play should behave something like:
   
     def play
       for each frame
@@ -59,4 +67,4 @@ Tasks:
 
 1. Write some code, if you dare. 
 
-1. Browse bowling_l7_interactive_play_refactor and critique the implementation.
+1. Browse bowling_7_interactive_play_refactor and critique the implementation.
