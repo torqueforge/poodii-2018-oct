@@ -13,7 +13,7 @@ Add support for 'No Tap' bowling, where you get a strike or spare for knocking d
 
 See bowling/lib/bowling.rb for some suggestions about the code.
 
-See branch bowling_l2_notap_refactor for a step-by-step example.
+See branch bowling_2_notap_refactor for a step-by-step example.
 
 
 ### Task 2:
@@ -23,4 +23,4 @@ work just like in TENPIN, but if the frame is open, you get an extra roll.  Note
 3rd roll knocks down all remaining pins, the frame is still open. That is, the frame score is 10, but
 there are no bonus rolls.
 
-See branch bowling_l3_duckpin_refactor for the step-by-step example.
+See branch bowling_3_duckpin_refactor for the step-by-step example.
