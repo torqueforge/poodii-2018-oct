@@ -42,9 +42,9 @@
 #    is used by the badly named Bowling class as if it defines a 'frame',
 #    which Bowling knows how to score.
 #
-#    I wish Frame was a real thing which calculated it's own score.
+#    I wish Frame was a real thing which calculated its own score.
 #
-# 3) The structure of the rules has leaked all over.  For example,
+# 3) The structure of the rules hash has leaked all over.  For example,
 #    Rules#scoring_rule and Bowling#score both have multiple references
 #    to keys in the hash.
 #
