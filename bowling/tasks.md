@@ -35,4 +35,4 @@ Your job is to write code to make the tests pass.  Do _as little design as possi
 
 Don't be alarmed if you don't get every test to passing in the time given, just concentrate on restraining yourself from doing a bunch of up-front design.
 
- See branch bowling_l1_tenpin_refactor for a step-by-step example.
+ See branch bowling_1_tenpin_refactor for a step-by-step example.
