@@ -6,7 +6,7 @@ class Player
 
   attr_reader :name, :rolls, :config, :frames
 
-  def initialize(name:, config:, rolls:)
+  def initialize(name:, config:, rolls: [])
     @name   = name
     @config = config
     @rolls  = rolls
@@ -18,7 +18,7 @@ class Player
   end
 
   def new_roll(roll)
-    Player.new(name: name, config: config, rolls: rolls << roll)
+    self.class.for(name: name, config: config, rolls: rolls << roll)
   end
 
   def num_frames_in_game
