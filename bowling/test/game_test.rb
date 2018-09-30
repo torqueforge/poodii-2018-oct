@@ -5,9 +5,7 @@ require_relative '../bowling'
 # Simplified (but entirely valid!) scoresheet
 #######################################
 class FakeScoresheet
-  def self.update(player:, io:)
-    new(frames: player.frames, io: io).render
-  end
+  extend ScoresheetRenderingObserver
 
   attr_reader :out
   def initialize(frames:, io: $stdout)

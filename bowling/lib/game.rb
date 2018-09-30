@@ -1,5 +1,11 @@
 require 'observer'
 
+module ScoresheetRenderingObserver
+  def update(player:, io:)
+    new(frames: player.frames, io: io).render
+  end
+end
+
 class Game
   include Observable
 

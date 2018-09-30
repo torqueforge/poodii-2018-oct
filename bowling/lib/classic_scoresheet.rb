@@ -5,9 +5,7 @@ require 'rainbow'
 # Adapt ClassicScoresheet to the 'scoresheet' API
 #######################################
 class ClassicScoresheetAdaptor
-  def self.update(player:, io:)
-    new(frames: player.frames, io: io).render
-  end
+  extend ScoresheetRenderingObserver
 
   attr_reader :scoresheet, :frames, :io
 
