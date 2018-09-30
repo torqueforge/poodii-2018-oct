@@ -1,3 +1,11 @@
+# New requirement: Some players cheat
+
+#   Yes, it's a sad commentary on the modern world.
+#
+#   Some players occasionally lie about their rolls to improve
+#   their scores.  Assume everyone is playing TENPIN, and
+#   decorate some of the players so they become cheaters.
+
 require 'observer'
 
 module ScoresheetRenderingObserver
