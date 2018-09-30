@@ -1,17 +1,28 @@
+require 'observer'
+
+module ScoresheetRenderingObserver
+  def update(player:, io:)
+    new(frames: player.frames, io: io).render
+  end
+end
+
 class Game
+  include Observable
+
   attr_reader :input, :output, :scoresheet_output,
               :scoresheet_maker,
-              :num_frames, :players
+              :num_frames, :players,
+              :observers
 
-  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout,
-                 scoresheet_maker: DetailedScoresheet)
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
     @input  = input
     @output = output
     @scoresheet_output = scoresheet_output
-    @scoresheet_maker  = scoresheet_maker
 
     @players    = initialize_players
     @num_frames = determine_num_frames
+
+    @observers  = []
   end
 
   def play
@@ -26,7 +37,8 @@ class Game
           player = update_player(i, player, roll)
         end
 
-        scoresheet_maker.new(frames: player.frames, io: scoresheet_output).render
+        changed
+        notify_observers(player: player, io: scoresheet_output)
       }
 
       frame_num += 1
