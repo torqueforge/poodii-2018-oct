@@ -10,14 +10,16 @@ class Game
   include Observable
 
   attr_reader :input, :output, :scoresheet_output,
-              :scoresheet_maker,
+              :scoresheet_maker, :player_maker,
               :num_frames, :players,
               :observers
 
-  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout,
+                 player_maker: Player)
     @input  = input
     @output = output
     @scoresheet_output = scoresheet_output
+    @player_maker      = player_maker
 
     @players    = initialize_players
     @num_frames = determine_num_frames
@@ -56,7 +58,7 @@ class Game
     [].tap {|players|
       get_player_names.each {|name|
         type = get_player_game_type(name).to_sym
-        players << Player.new(name: name, config: Variant::CONFIGS.fetch(type))
+        players << player_maker.for(name: name, config: Variant::CONFIGS.fetch(type))
       }
     }
   end

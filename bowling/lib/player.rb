@@ -1,7 +1,12 @@
 class Player
+
+  def self.for(name:, config: Variant::CONFIGS[:TENPIN], rolls: [])
+    new(name: name, config: config, rolls: rolls)
+  end
+
   attr_reader :name, :rolls, :config, :frames
 
-  def initialize(name:, config:, rolls:[])
+  def initialize(name:, config:, rolls:)
     @name   = name
     @config = config
     @rolls  = rolls
