@@ -5,6 +5,8 @@ require_relative '../bowling'
 # Simplified (but entirely valid!) scoresheet
 #######################################
 class FakeScoresheet
+  extend ScoresheetRenderingObserver
+
   attr_reader :out
   def initialize(frames:, io: $stdout)
     @out = io
@@ -48,8 +50,8 @@ class GameTest < Minitest::Test
   end
 
   def start_game
-    @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output,
-                     scoresheet_maker: @scoresheet_maker)
+    @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output)
+    @game.add_observer(@scoresheet_maker)
   end
 
   def starts_with?(str, io)
