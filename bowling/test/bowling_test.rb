@@ -219,8 +219,27 @@ class FrameTest < Minitest::Test
 end
 
 
+#######################################
+# ScoresheetAPI Test:
+#   To be included within the unit test of
+#   any object who wants to play the
+#   'scoresheet' role.
+#######################################
+module ScoresheetAPITest
+  def test_initialization_takes_frame_and_io_keyword_args
+    @api_test_target.new(frames: nil, io: nil)
+  end
+
+  def test_implements_render
+    assert_respond_to(@api_test_target.new(frames: nil, io: nil), :render)
+  end
+end
+
 class DetailedScoresheetTest < Minitest::Test
+  include ScoresheetAPITest
+
   def setup
+    @api_test_target = DetailedScoresheet
     @io = StringIO.new
   end
 
