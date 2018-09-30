@@ -1,11 +1,3 @@
-# New requirement: Some players cheat
-
-#   Yes, it's a sad commentary on the modern world.
-#
-#   Some players occasionally lie about their rolls to improve
-#   their scores.  Assume everyone is playing TENPIN, and
-#   decorate some of the players so they become cheaters.
-
 require 'observer'
 
 module ScoresheetRenderingObserver
@@ -14,18 +6,32 @@ module ScoresheetRenderingObserver
   end
 end
 
+# Design Challenge:
+#
+# Now Cheater exists and can Decorate a Player.  Fine.
+# However, the way Game is structured here, either everybody cheats
+# (i.e., you inject player_maker: Cheater) or no one does
+# (you inject player_maker: Player, or take the default).
+#
+# This seems to defeat the whole point of cheating.
+#
+# What would it take to allow some players to secretly cheat,
+# unbeknownst to the others?
+
 class Game
   include Observable
 
   attr_reader :input, :output, :scoresheet_output,
-              :scoresheet_maker,
+              :scoresheet_maker, :player_maker,
               :num_frames, :players,
               :observers
 
-  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout,
+                 player_maker: Player)
     @input  = input
     @output = output
     @scoresheet_output = scoresheet_output
+    @player_maker      = player_maker
 
     @players    = initialize_players
     @num_frames = determine_num_frames
@@ -64,7 +70,7 @@ class Game
     [].tap {|players|
       get_player_names.each {|name|
         type = get_player_game_type(name).to_sym
-        players << Player.new(name: name, config: Variant::CONFIGS.fetch(type))
+        players << player_maker.for(name: name, config: Variant::CONFIGS.fetch(type))
       }
     }
   end
