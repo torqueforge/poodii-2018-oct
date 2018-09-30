@@ -1,6 +1,10 @@
 class DetailedScoresheet
+  def self.update(player:, io:)
+    new(frames: player.frames, io: io).render
+  end
+
   attr_reader :frames, :out
-  def initialize(frames:, io: $stdout)
+  def initialize(frames: nil, io: $stdout)
     @frames = frames
     @out    = io
   end
