@@ -1,11 +1,15 @@
 #####################################################################
 class Game
   attr_reader :input, :output, :scoresheet_output,
+              :scoresheet_maker,
               :num_frames, :players
-  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
+
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout,
+                 scoresheet_maker: DetailedScoresheet)
     @input  = input
     @output = output
     @scoresheet_output = scoresheet_output
+    @scoresheet_maker  = scoresheet_maker
 
     @players    = initialize_players
     @num_frames = determine_num_frames
@@ -23,7 +27,7 @@ class Game
           player = update_player(i, player, roll)
         end
 
-        DetailedScoresheet.new(frames: player.frames, io: scoresheet_output).render
+        scoresheet_maker.new(frames: player.frames, io: scoresheet_output).render
       }
 
       frame_num += 1
