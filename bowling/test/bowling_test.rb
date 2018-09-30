@@ -219,8 +219,27 @@ class FrameTest < Minitest::Test
 end
 
 
+#######################################
+# ScoresheetAPI Test:
+#   To be included within the unit test of
+#   any object who wants to play the
+#   'scoresheet' role.
+#######################################
+module ScoresheetAPITest
+  def test_initialization_takes_frame_and_io_keyword_args
+    @api_test_target.new(frames: nil, io: nil)
+  end
+
+  def test_implements_render
+    assert_respond_to(@api_test_target.new(frames: nil, io: nil), :render)
+  end
+end
+
 class DetailedScoresheetTest < Minitest::Test
+  include ScoresheetAPITest
+
   def setup
+    @api_test_target = DetailedScoresheet
     @io = StringIO.new
   end
 
@@ -270,11 +289,36 @@ class DetailedScoresheetTest < Minitest::Test
   end
 end
 
+
+#######################################
+# Simplified (but entirely valid!) scoresheet
+#######################################
+class FakeScoresheet
+  attr_reader :out
+  def initialize(frames:, io: $stdout)
+    @out = io
+  end
+
+  def render
+    out.puts "The scoresheet rendered!"
+  end
+end
+
+class FakeScoresheetTest  < Minitest::Test
+  include ScoresheetAPITest
+
+  def setup
+    @api_test_target = FakeScoresheet
+  end
+end
+
+
 class GameTest < Minitest::Test
   def setup
     @input  = StringIO.new("\n\n\n\n\n")
     @output = StringIO.new
     @scoresheet_output = StringIO.new
+    @scoresheet_maker  = FakeScoresheet
 
     @player_name_prompt = "\nWho's playing? (Larry, Curly, Moe) >"
     @game_type_prompt   = "\nWhich game would %s like to play? (TENPIN) >"
@@ -293,7 +337,8 @@ class GameTest < Minitest::Test
   end
 
   def start_game
-    @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output)
+    @game = Game.new(input: @input, output: @output, scoresheet_output: @scoresheet_output,
+      scoresheet_maker: @scoresheet_maker)
   end
 
   def starts_with?(str, io)
@@ -367,7 +412,7 @@ class GameTest < Minitest::Test
 
   def test_prints_scoresheet_after_turn
     @input.string = @mock_answers_with_pinfalls
-    expected = "FRAME: |--1-----|-"
+    expected = "The scoresheet rendered!"
     start_game
     @game.play
     assert_starts_with(expected, @scoresheet_output)

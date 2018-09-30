@@ -1,6 +1,33 @@
 require 'terminal-table'
 require 'rainbow'
 
+#######################################
+# Adapt ClassicScoresheet to the 'scoresheet' API
+#######################################
+class ClassicScoresheetAdaptor
+  attr_reader :scoresheet, :frames, :io
+
+  def initialize(frames:, io:)
+    @frames = frames
+    @io     = io
+  end
+
+  def render
+    $stdout = io
+    scoresheet.print
+    $stodout = STDOUT
+  end
+
+  def scoresheet
+    @scoresheet ||= ClassicScoresheet.new(frames: frames)
+  end
+end
+
+
+#######################################
+# Original ClassicScoresheet, which does _not_ conform to the
+#   'scoresheet' API.
+#######################################
 class ClassicScoresheet
   attr_reader :frames, :num_frames, :num_rolls_per_frame,
               :cols_in_normal_frame, :tot_cols_in_normal_frames, :cols_in_final_frame, :num_cols,
@@ -25,7 +52,6 @@ class ClassicScoresheet
     @spare_char     = Rainbow("/").orange
   end
 
-  # TODO: Note that ClassicScoresheet has a different API than DetailedScoresheet
   def print
     table = Terminal::Table.new do |t|
       t << header_line
