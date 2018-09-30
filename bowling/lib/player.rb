@@ -1,4 +1,7 @@
+require 'forwardable'
 class Player
+  extend Forwardable
+  def_delegators :frames, :score, :turn_complete?
 
   def self.for(name:, config: Variant::CONFIGS[:TENPIN], rolls: [])
     new(name: name, config: config, rolls: rolls)
@@ -13,19 +16,11 @@ class Player
     @frames = Frames.for(rolls: rolls, config: config)
   end
 
-  def score
-    frames.score
-  end
-
   def new_roll(roll)
     self.class.for(name: name, config: config, rolls: rolls << roll)
   end
 
   def num_frames_in_game
     frames.size
-  end
-
-  def turn_complete?(frame_number)
-    frames.turn_complete?(frame_number)
   end
 end
