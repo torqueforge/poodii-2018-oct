@@ -4,12 +4,10 @@ class Game
               :num_frames, :players,
               :observers
 
-  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout,
-                 scoresheet_maker: DetailedScoresheet)
+  def initialize(input: $stdin, output: $stdout, scoresheet_output: $stdout)
     @input  = input
     @output = output
     @scoresheet_output = scoresheet_output
-    @scoresheet_maker  = scoresheet_maker
 
     @players    = initialize_players
     @num_frames = determine_num_frames
@@ -30,7 +28,6 @@ class Game
         end
 
         notify_observers(player)
-        # scoresheet_maker.new(frames: player.frames, io: scoresheet_output).render
       }
 
       frame_num += 1
