@@ -60,4 +60,12 @@ class BowlingTest < Minitest::Test
     rolls = [9,9,9,3,6,2]
     assert_equal 77, Bowling.new(rolls, config=Rules::CONFIGS[:NOTAP]).score
   end
+
+  # See the fear above has already come true. Our design means we'll
+  # end up with a 'Bowling' test for all possible outcomes for each
+  # game variant.
+  def test_scoring_partial_duckpin_game_with_unfulfilled_spare
+    rolls = [1,1,1,2,2,2,10,2,2,3]
+    assert_equal 30, Bowling.new(rolls, config=Rules::CONFIGS[:DUCKPIN]).score
+  end
 end
