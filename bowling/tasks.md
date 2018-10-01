@@ -12,7 +12,9 @@
 
 ### Task:
 
-* Implement LOWBALL, see bowling/lib/bowling.rb for a description of the Lowball requirements, and a preliminary design discussion.
+* Implement LOWBALL.
+
+* See bowling/lib/bowling.rb for a description of the Lowball requirements, and a preliminary design discussion.
 
 * Draw a class diagram of the existing code, and at least one sequence diagram of your tentative design.
 
