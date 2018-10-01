@@ -97,3 +97,29 @@ class Variant
     }
   end
 end
+
+
+
+# Extract the roll parsing responsibility.
+
+# The #parse method below takes rolls and a list of frame_config hashes,
+# and returns an array containing
+#   number of triggering rolls
+#   number of rolls to score
+#   an array containing the score for every roll that contributes to this frame.
+#
+# Rules#framify could collaborate with this parser to get this information,
+# rather than hard_coding its own logic to this.
+class StandardRollParser
+
+  def parse(rolls:, frame_configs:)
+
+    # Select the applicable frame config
+    cfg =
+      frame_configs.find {|frame_cfg|
+        (rolls.take(frame_cfg[:num_triggering_rolls]).sum) >= frame_cfg[:triggering_value]
+      }
+
+      [ cfg[:num_triggering_rolls], cfg[:num_rolls_to_score], rolls.take(cfg[:num_rolls_to_score]) ]
+  end
+end
