@@ -1,6 +1,14 @@
 require_relative '../../test_helper'
 require_relative '../lib/bowling'
 
+class FramesTest < Minitest::Test
+  def test_gutter_game
+    rolls = [0] * 20
+    assert_equal 0, Frames.for(rolls: rolls).score
+  end
+end
+
+
 class BowlingTest < Minitest::Test
   def test_gutter_game
     rolls = [0] * 20

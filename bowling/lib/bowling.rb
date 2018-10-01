@@ -12,6 +12,25 @@ class Bowling
 end
 
 
+# Bowling class's sole responsiblity is to return the score
+# of a list of frame objects.
+# Maybe Bowling is really a Frames, like below.
+class Frames
+  def self.for(rolls:, config: Rules::CONFIGS[:TENPIN])
+    new(Rules.new(config: config).framify(rolls))
+  end
+
+  attr_reader :list
+  def initialize(list)
+    @list  = list
+  end
+
+  def score
+    list.reduce(0) {|sum, frame| sum += frame.score}
+  end
+end
+
+
 require 'ostruct'
 
 class Rules
