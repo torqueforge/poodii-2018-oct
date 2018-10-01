@@ -100,6 +100,12 @@ class Variant
       (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
     }
   end
+
+    # This method should work to replace #scoring_rule
+    def parse(rolls)
+      parser = Object.const_get(config.parser).new
+      parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
+    end
 end
 
 
