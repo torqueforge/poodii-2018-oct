@@ -63,8 +63,13 @@ This brings up lots of issues:
      How many of these objects does Game get to know about?
 
 Tasks:
-1. Draw one or more sequence diagrams, exploring possible designs.
 
-1. Write some code, if you dare. 
+1. Draw sequence/class diagrams for the existing code.
 
-1. Browse bowling_7_interactive_play_refactor and critique the implementation.
+1. Ponder a design to fullfill the interactive game requirement.
+
+1. Draw sequence/class diagrams for your new design.
+
+1. Prepare to present your design to the class, illustrated by your sequence diagrams.
+
+1. Write some code, if you dare.
