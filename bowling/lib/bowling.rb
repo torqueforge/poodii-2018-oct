@@ -1,20 +1,3 @@
-class Bowling
-  attr_reader :rolls, :config
-  def initialize(rolls, config=Rules::CONFIGS[:TENPIN])
-    @rolls  = rolls
-    @config = config
-  end
-
-  def score
-    frame_list = Rules.new(config: config).framify(rolls)
-    frame_list.reduce(0) {|sum, frame| sum += frame.score}
-  end
-end
-
-
-# Bowling class's sole responsiblity is to return the score
-# of a list of frame objects.
-# Maybe Bowling is really a Frames, like below.
 class Frames
   def self.for(rolls:, config: Rules::CONFIGS[:TENPIN])
     new(Rules.new(config: config).framify(rolls))
