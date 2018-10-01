@@ -47,6 +47,10 @@ class Variant
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 3, triggering_value:  0, num_rolls_to_score: 3} ]
+      },
+    :LOWBALL => {
+      :scoring_rules => [ # The current structure won't work for LOWBALL
+         ]
       }
     }
 
@@ -64,6 +68,12 @@ class Variant
 
     while current_frame < max_frames
       current_frame += 1
+
+      # rule is used to determine
+      #   how many rolls to score,
+      #   how many rolls to drop, and
+      #   the number of rolls that go into a frame,
+      # but we don't know how to define generic scoring_rules for LOWBALL.
       rule = scoring_rule(remaining_rolls)
 
       scoring_rolls =
@@ -79,6 +89,8 @@ class Variant
     frame_list
   end
 
+  # This algorithm only works for variants that can be defined
+  # with a scoring_rules hash
   def scoring_rule(rolls)
     config.scoring_rules.find {|rule|
       (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
