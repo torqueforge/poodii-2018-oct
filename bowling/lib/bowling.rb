@@ -1,3 +1,43 @@
+# Here's a reminder of the original goals for the prior refactoring:
+#
+      # 1) The Bowling class pretends that its job is to calculate a score, but
+      #    most of the logic is concerned with turning a list of rolls into
+      #    a list of (virtual) 'frames', for which it then sums scores.
+      #
+      #    I wish Bowling was better named, and more honest.
+      #
+      # 2) The Rules class uses a config to select a 'rule'.  This 'rule'
+      #    is used by the badly named Bowling class as if it defines a 'frame',
+      #    which Bowling knows how to score.
+      #
+      #    I wish Frame was a real thing which calculated it's own score.
+      #
+      # 3) The structure of the rules has leaked all over.  For example,
+      #    Rules#scoring_rule and Bowling#score both have multiple references
+      #    to keys in the hash.
+      #
+      #    I'd like the structure of the hash to be known in only one place.
+#
+# Those goals have been achieved.
+#   Bowling has been replaced by Frames
+#   Frame exists, and responds to #score
+#   Variant is the sole owner of knowledge of a rules hash
+#
+# So far, so good, but are we any closer to being able to implement LOWBALL?
+#
+# Let's ask that question a different way.
+#
+# Have we increased the isolation of the things that need to vary? Or,
+# are we at least beginning to understand the things that need to vary?
+#
+# Some things _are_ better.
+# For example, if each Frame object returned the right #score for a LOWBALL game,
+#   Frames would just work.
+# Also, if Variant constructed a Frame with the _value_ of the roll, rather than
+#   the _pinfall_ of the roll, Frame would just work.
+#
+# Perhaps Variant should be smarter about how it builds Frame objects.
+
 class Frames
   def self.for(rolls:, config: Variant::CONFIGS[:TENPIN])
     new(Variant.new(config: config).framify(rolls))
