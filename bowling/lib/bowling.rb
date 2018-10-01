@@ -78,15 +78,16 @@ class Variant
       #   how many rolls to drop, and
       #   the number of rolls that go into a frame,
       # but we don't know how to define generic scoring_rules for LOWBALL.
-      rule = scoring_rule(remaining_rolls)
+      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(remaining_rolls)
 
       scoring_rolls =
-        if remaining_rolls.size >=  rule[:num_rolls_to_score]
-          remaining_rolls.take(rule[:num_rolls_to_score])
+        if remaining_rolls.size >=  num_rolls_to_score
+          roll_scores
         else
           [0]
         end
-      remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
+
+      remaining_rolls = remaining_rolls.drop(num_triggering_rolls)
       frame_list << Frame.new(rolls: scoring_rolls)
     end
 
