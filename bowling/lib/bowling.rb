@@ -15,16 +15,10 @@ class Bowling
       current_frame += 1
       rule = Rules.new(config: config).scoring_rule(remaining_rolls)
 
-      # The following is obsolete because the conditional has been moved to
-      # Rules#scoring_rule. We already _have_ the correct rule via the code above.
-
-      # if (remaining_rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
-        if remaining_rolls.size >=  rule[:num_rolls_to_score]
-          running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
-          remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
-        end
-      #   next
-      # end
+      if remaining_rolls.size >=  rule[:num_rolls_to_score]
+        running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
+        remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
+      end
     end
 
     running_score
