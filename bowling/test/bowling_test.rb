@@ -58,7 +58,7 @@ class FramesTest < Minitest::Test
   #  What will happen to the tests when we add other bowling variants?
   def test_scoring_partial_notap_game_with_unfulfilled_spare
     rolls = [9,9,9,3,6,2]
-    assert_equal 77, Frames.for(rolls: rolls, config: Rules::CONFIGS[:NOTAP]).score
+    assert_equal 77, Frames.for(rolls: rolls, config: Variant::CONFIGS[:NOTAP]).score
   end
 
   # See the fear above has already come true. Our design means we'll
@@ -66,6 +66,6 @@ class FramesTest < Minitest::Test
   # game variant.
   def test_scoring_partial_duckpin_game_with_unfulfilled_spare
     rolls = [1,1,1,2,2,2,10,2,2,3]
-    assert_equal 30, Frames.for(rolls: rolls, config: Rules::CONFIGS[:DUCKPIN]).score
+    assert_equal 30, Frames.for(rolls: rolls, config: Variant::CONFIGS[:DUCKPIN]).score
   end
 end

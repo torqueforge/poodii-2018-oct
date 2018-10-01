@@ -1,6 +1,6 @@
 class Frames
-  def self.for(rolls:, config: Rules::CONFIGS[:TENPIN])
-    new(Rules.new(config: config).framify(rolls))
+  def self.for(rolls:, config: Variant::CONFIGS[:TENPIN])
+    new(Variant.new(config: config).framify(rolls))
   end
 
   attr_reader :list
@@ -16,7 +16,7 @@ end
 
 require 'ostruct'
 
-class Rules
+class Variant
   CONFIGS = {
     :TENPIN => {
       :scoring_rules => [
