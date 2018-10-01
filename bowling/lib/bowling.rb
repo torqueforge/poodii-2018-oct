@@ -58,9 +58,10 @@ class Variant
       }
     }
 
-  attr_reader :config
+  attr_reader :config, :parser
   def initialize(config:)
     @config = OpenStruct.new(config)
+    @parser = Object.const_get(self.config.parser).new
   end
 
   def framify(rolls)
@@ -88,7 +89,6 @@ class Variant
   end
 
     def parse(rolls)
-      parser = Object.const_get(config.parser).new
       parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
     end
 end
