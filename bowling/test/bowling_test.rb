@@ -68,4 +68,30 @@ class FramesTest < Minitest::Test
     rolls = [1,1,1,2,2,2,10,2,2,3]
     assert_equal 30, Frames.for(rolls: rolls, config: Variant::CONFIGS[:DUCKPIN]).score
   end
+
+  # Add Frames tests for yet another variant (LOWBALL). This is further pavement.
+  #
+  # However, now that we have parsers everything is about to become simpler.
+  # These integration-y tests will become _unit_ tests on the parsers.
+  #
+  # FYI, the LowBallParser that's checked in with this commit CONTAINS A BUG
+  # but still passes these two tests.  That bug will be caught later, when
+  # unit tests get written.
+  #
+  # Two questions:
+  # 1) Would that bug exist if the LowballRollParser had been TDD'd rather then covered
+  #      with these integration tests?
+  # 2) The LowballParser was written during an exploratory spike, using the very light
+  #      coverage of these integration tests.  Did spiking make it easier or harder to
+  #      arrive at an understanding of how the parser should be written?
+
+  def test_scoring_lowball_game_a
+    rolls = [0,0,0,0,0,0]
+    assert_equal 120, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
+  end
+
+  def test_scoring_lowball_game_b
+    rolls = [1,0,2]
+    assert_equal 13, Frames.for(rolls: rolls, config: Variant::CONFIGS[:LOWBALL]).score
+  end
 end
