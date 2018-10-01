@@ -3,7 +3,7 @@ Game/Scoresheet collaboration
 1. Change Game so that it can interact with _any_ scoresheet.
 
 1. Adapt ClassicScoresheet for use in a Game.    
-      (Consider where it's output is going.)
+      (Consider where its output is going.)
 
 1. Use ClassicScoresheet instead of DetailedScoresheet in a Game
 
