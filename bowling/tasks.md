@@ -4,15 +4,15 @@
 ### Goals:
 
 * Become familiar with the Bowling Problem
-* Practice TDD
+* Practice writing just enough code to pass the tests
 * Remind yourself of Shameless Green
 
 
 ### Task:
 
-In this task you'll work on the bowling kata exercise (as defined by Robert Martin in bowling/BowlingGameKata.pdf).
+In this task you'll calculate the score for the list of bowling rolls.
 
-Use TDD. The tests are already written, and are in bowling/test/bowling_test.rb.
+The tests are already written and are in bowling/test/bowling_test.rb.
 
 Run the tests by
 
@@ -29,10 +29,14 @@ and then
 
 ### Details:
 
-The bowling_test.rb contains *10* tests.  The first 5 are duplicates of Bob Martin's.  The next 5 are our own additions.
+The bowling kata was popularized by Robert Martin as an exercise in TDD (see bowling/BowlingGameKata.pdf).  When Martin does the kata, he does up front
+design.  When _you_ do the kata, try to avoid design and just write
+Shameless Green.
 
-Your job is to write code to make the tests pass.  Do _as little design as possible_; shoot for shameless green.
+The bowling_test.rb contains *10* tests.  The first 5 are duplicates of Martin's.  The next 5 are our own additions.
+
+Your job is to write code to make the tests.  Strive for Shameless Green.
 
 Don't be alarmed if you don't get every test to passing in the time given, just concentrate on restraining yourself from doing a bunch of up-front design.
 
- See branch bowling_1_tenpin_refactor for a step-by-step example.
+See branch bowling_1_tenpin_refactor for a step-by-step example.
