@@ -94,6 +94,14 @@ class Variant
 end
 
 
+########################## Roll Parsers #############################
+
+#############################
+# StandardRollParser uses rules specified in a configuration hash
+# to parse frame information from a list of rolls.
+#
+# It returns the original pinfall as the score for each roll.
+#############################
 class StandardRollParser
 
   def parse(rolls:, frame_configs:)
