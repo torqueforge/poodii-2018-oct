@@ -1,3 +1,6 @@
+#  New Task:  Allow Game to use this new ClassicScoresheet
+#             interchangably with the existing DetailedScoresheet.
+
 require 'terminal-table'
 require 'rainbow'
 
