@@ -94,15 +94,6 @@ class Variant
     frame_list
   end
 
-  # This algorithm only works for variants that can be defined
-  # with a scoring_rules hash
-  def scoring_rule(rolls)
-    config.scoring_rules.find {|rule|
-      (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
-    }
-  end
-
-    # This method should work to replace #scoring_rule
     def parse(rolls)
       parser = Object.const_get(config.parser).new
       parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
