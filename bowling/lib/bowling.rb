@@ -14,6 +14,18 @@ class Frames
 end
 
 
+class Frame
+  attr_reader :rolls
+  def initialize(rolls:)
+    @rolls = rolls
+  end
+
+  def score
+    rolls.sum
+  end
+end
+
+
 require 'ostruct'
 
 class Variant
@@ -71,16 +83,5 @@ class Variant
     config.scoring_rules.find {|rule|
       (rolls.take(rule[:num_triggering_rolls]).sum) >= rule[:triggering_value]
     }
-  end
-end
-
-class Frame
-  attr_reader :rolls
-  def initialize(rolls:)
-    @rolls = rolls
-  end
-
-  def score
-    rolls.sum
   end
 end
