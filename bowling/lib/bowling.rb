@@ -10,29 +10,29 @@ class Bowling
     # which know their score, and only be responsible here for
     # calculating the final score, like so:
     #
-    # frame_list = Rules.new(config: config).framify(rolls)
-    # frame_list.reduce(0) {|sum, frame| sum += frame.score}
+    frame_list = Rules.new(config: config).framify(rolls)
+    frame_list.reduce(0) {|sum, frame| sum += frame.score}
     #
     # Making the above code work requires adding a Frame class
     # that knows its score, and adding #framify to Rules to
     # return an instance of Frame.  Thus, this commit.
 
-    running_score = 0
-    current_frame = 0
-    max_frames    = 10
-    remaining_rolls = rolls
+    # running_score = 0
+    # current_frame = 0
+    # max_frames    = 10
+    # remaining_rolls = rolls
 
-    while current_frame < max_frames
-      current_frame += 1
-      rule = Rules.new(config: config).scoring_rule(remaining_rolls)
+    # while current_frame < max_frames
+    #   current_frame += 1
+    #   rule = Rules.new(config: config).scoring_rule(remaining_rolls)
 
-      if remaining_rolls.size >=  rule[:num_rolls_to_score]
-        running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
-        remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
-      end
-    end
+    #   if remaining_rolls.size >=  rule[:num_rolls_to_score]
+    #     running_score  += remaining_rolls.take(rule[:num_rolls_to_score]).sum
+    #     remaining_rolls = remaining_rolls.drop(rule[:num_triggering_rolls])
+    #   end
+    # end
 
-    running_score
+    # running_score
   end
 end
 
