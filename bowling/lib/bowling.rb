@@ -31,24 +31,28 @@ require 'ostruct'
 class Variant
   CONFIGS = {
     :TENPIN => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value:  0, num_rolls_to_score: 2} ]
       },
     :NOTAP => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 9, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 0, num_rolls_to_score: 2} ]
       },
     :DUCKPIN => {
+      :parser => "StandardRollParser",
       :scoring_rules => [
         {num_triggering_rolls: 1, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 2, triggering_value: 10, num_rolls_to_score: 3},
         {num_triggering_rolls: 3, triggering_value:  0, num_rolls_to_score: 3} ]
       },
     :LOWBALL => {
+      :parser => "Don't have one yet",
       :scoring_rules => [ # The current structure won't work for LOWBALL
          ]
       }
