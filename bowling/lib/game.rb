@@ -6,18 +6,6 @@ module ScoresheetRenderingObserver
   end
 end
 
-# Design Challenge:
-#
-# Now Cheater exists and can Decorate a Player.  Fine.
-# However, the way Game is structured here, either everybody cheats
-# (i.e., you inject player_maker: Cheater) or no one does
-# (you inject player_maker: Player, or take the default).
-#
-# This seems to defeat the whole point of cheating.
-#
-# What would it take to allow some players to secretly cheat,
-# unbeknownst to the others?
-
 class Game
   include Observable
 

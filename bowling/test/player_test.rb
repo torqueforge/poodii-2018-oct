@@ -15,7 +15,11 @@ class PlayerTest < Minitest::Test
     assert_equal [1,1,6], @new_player.rolls
   end
 
-  def test_mutating_rolls_creates_new_player
-    refute_equal @new_player.object_id, @orig_player.object_id
+  # def test_mutating_rolls_creates_new_player
+  #   refute_equal @new_player.object_id, @orig_player.object_id
+  # end
+
+  def test_mutating_rolls_returns_existing_player
+    assert_equal @new_player.object_id, @orig_player.object_id
   end
 end
