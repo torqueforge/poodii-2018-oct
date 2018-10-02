@@ -35,7 +35,7 @@ Shameless Green.
 
 The bowling_test.rb contains *10* tests.  The first 5 are duplicates of Martin's.  The next 5 are our own additions.
 
-Your job is to write code to make the tests.  Strive for Shameless Green.
+Your job is to write code to make the tests pass.  Strive for Shameless Green.
 
 Don't be alarmed if you don't get every test to passing in the time given, just concentrate on restraining yourself from doing a bunch of up-front design.
 
