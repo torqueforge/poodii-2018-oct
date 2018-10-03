@@ -49,3 +49,10 @@ Finished in 0.001317s, 759.3014 runs/s, 759.3014 assertions/s.
 
 1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
 ```
+
+## Track and fetch all the remote branches
+
+    #!/bin/bash
+    for remote in `git branch -r`; do git branch --track ${remote#origin/} $remote; done
+    git fetch --all
+    git pull --all
