@@ -18,7 +18,7 @@ module FrameStatus
     end
 
     def add_roll(roll, frame)
-      raise "\nError: Attempting to add roll #{roll} to #{self.inspect} frame is #{frame.inspect}\n"
+      roll
     end
   end
 

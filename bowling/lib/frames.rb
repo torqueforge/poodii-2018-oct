@@ -47,14 +47,12 @@ class Frames
   end
 
   def process_roll(roll)
-    index_of_first_acceptor = list.find_index {|frame| frame.accepts_another_roll?}
-    not_yet_consumed_roll = roll
-
-    list[index_of_first_acceptor..-1].each {|f|
-      break unless not_yet_consumed_roll
-      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(f.rolls + [not_yet_consumed_roll])
-      not_yet_consumed_roll = f.add_roll(roll_scores.last)
-      f.status = status(num_triggering_rolls, num_rolls_to_score, f.rolls)
+    list.each {|f|
+      if f.accepts_another_roll? && roll
+        num_triggering_rolls, num_rolls_to_score, roll_scores = parse(f.rolls + [roll])
+        roll = f.add_roll(roll_scores.last)
+        f.status = status(num_triggering_rolls, num_rolls_to_score, f.rolls)
+      end
     }
   end
 
