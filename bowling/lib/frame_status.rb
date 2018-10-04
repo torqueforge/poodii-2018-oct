@@ -17,15 +17,6 @@ module FrameStatus
       true
     end
 
-    ####
-    def accepts_another_roll?
-      false
-    end
-
-    def following_frame_also_needs_roll?
-      false
-    end
-
     def add_roll(roll, frame)
       raise "\nError: Attempting to add roll #{roll} to #{self.inspect} frame is #{frame.inspect}\n"
     end
@@ -49,16 +40,9 @@ module FrameStatus
       false
     end
 
-    def accepts_another_roll?
-      true
-    end
-
-    def following_frame_also_needs_roll?
-      false
-    end
-
     def add_roll(roll, frame)
       frame.normal_rolls << roll
+      nil
     end
   end
 
@@ -68,16 +52,9 @@ module FrameStatus
       true
     end
 
-    def accepts_another_roll?
-      true
-    end
-
-    def following_frame_also_needs_roll?
-      true
-    end
-
     def add_roll(roll, frame)
       frame.bonus_rolls << roll
+      roll
     end
   end
 end

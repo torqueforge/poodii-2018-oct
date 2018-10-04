@@ -43,28 +43,23 @@ class Frames
   # Mutation support
   ###################
   def new_roll(roll)
-    frames_accepting_roll.each {|f|
-      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(f.rolls << roll)
-      f.add_roll(roll_scores.last)
+    process_roll(roll)
+  end
+
+  def process_roll(roll)
+    index_of_first_acceptor = list.find_index {|frame| frame.accepts_another_roll?}
+    not_yet_consumed_roll = roll
+
+    list[index_of_first_acceptor..-1].each {|f|
+      break unless not_yet_consumed_roll
+      num_triggering_rolls, num_rolls_to_score, roll_scores = parse(f.rolls + [not_yet_consumed_roll])
+      not_yet_consumed_roll = f.add_roll(roll_scores.last)
       f.status = status(num_triggering_rolls, num_rolls_to_score, f.rolls)
     }
   end
 
-  def frames_accepting_roll
-    index_of_first_acceptor = list.find_index {|frame| frame.accepts_another_roll?}
-
-    [list.at(index_of_first_acceptor)].tap {|target_frames|
-
-      list[index_of_first_acceptor..-1].each_with_index {|frame, index|
-
-        if frame.following_frame_also_needs_roll?
-          target_frames << list[index + index_of_first_acceptor + 1]
-        end
-      }
-    }.compact
-  end
-
-  #  following copied directly for Variant factory
+  #  Following copied directly for Variant factory.
+  #  State pattern says this should be in the state objects themselves.
   def parse(rolls)
     parser.parse(rolls: rolls, frame_configs: config.scoring_rules)
   end

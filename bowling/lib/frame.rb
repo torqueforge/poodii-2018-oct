@@ -2,8 +2,7 @@ require 'forwardable'
 class Frame
   extend Forwardable
   def_delegators :status,
-    :normal_rolls_complete?, :bonus_rolls_complete?,
-    :accepts_another_roll?, :following_frame_also_needs_roll?
+    :normal_rolls_complete?, :bonus_rolls_complete?
 
   attr_reader :normal_rolls, :bonus_rolls, :turn_rule
   attr_accessor :status
@@ -22,6 +21,10 @@ class Frame
 
   def turn_complete?
     turn_rule.turn_complete?(self)
+  end
+
+  def accepts_another_roll?
+    !(normal_rolls_complete? && bonus_rolls_complete?)
   end
 
   def score
