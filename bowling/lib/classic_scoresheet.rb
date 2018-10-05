@@ -15,7 +15,7 @@ class ClassicScoresheetAdaptor
   def render
     $stdout = io
     scoresheet.print
-    $stodout = STDOUT
+    $stdout = STDOUT
   end
 
   def scoresheet
