@@ -21,8 +21,6 @@ class Player
     frames.new_roll(roll)
     # @frames = Frames.for(rolls: rolls, config: config)
     self
-
-    # self.class.for(name: name, config: config, rolls: rolls << roll)
   end
 
   def num_frames_in_game

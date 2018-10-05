@@ -70,7 +70,7 @@ class Variant
     turn_rule    = turn_rule(frame_num)
 
     Frame.new(normal_rolls: normal_rolls, bonus_rolls: bonus_rolls,
-                    status: status, turn_rule: turn_rule)
+                    status: status, turn_rule: turn_rule, config: config)
   end
 
   def parse(rolls)
@@ -84,7 +84,7 @@ class Variant
       FrameStatus::MissingNormalRolls
     else
       FrameStatus::MissingBonusRolls
-    end.new
+    end.new(config: config)
   end
 
   def turn_rule(current_frame_num)

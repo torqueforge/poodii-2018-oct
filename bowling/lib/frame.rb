@@ -8,11 +8,12 @@ class Frame
   attr_accessor :status
 
   def initialize(normal_rolls:, bonus_rolls:, status: nil,
-                 turn_rule: GeneralTurnRule.new)
+                 turn_rule: GeneralTurnRule.new, config: nil)
     @normal_rolls = normal_rolls
     @bonus_rolls  = bonus_rolls
     @status       = status
     @turn_rule    = turn_rule
+    @config       = config
   end
 
   def rolls
